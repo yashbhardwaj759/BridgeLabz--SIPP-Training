@@ -1,0 +1,77 @@
+// Interface Worker
+interface Worker {
+    String performDuties();
+}
+
+// Superclass Person
+class Person {
+    private String name;
+    private String id;
+
+    public Person(String name, String id) {
+        this.name = name;
+        this.id = id;
+    }
+
+    // Getters
+    public String getName() {
+        return name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String displayInfo() {
+        return "Name: " + name + ", ID: " + id;
+    }
+}
+
+// Subclass Chef implementing Worker
+class Chef extends Person implements Worker {
+    private String specialty;
+
+    public Chef(String name, String id, String specialty) {
+        super(name, id);
+        this.specialty = specialty;
+    }
+
+    @Override
+    public String performDuties() {
+        return "Chef " + getName() + " is preparing " + specialty + " dishes.";
+    }
+
+    @Override
+    public String displayInfo() {
+        return super.displayInfo() + ", Specialty: " + specialty;
+    }
+}
+
+// Subclass Waiter implementing Worker
+class Waiter extends Person implements Worker {
+    private int tableNumber;
+
+    public Waiter(String name, String id, int tableNumber) {
+        super(name, id);
+        this.tableNumber = tableNumber;
+    }
+
+    @Override
+    public String performDuties() {
+        return "Waiter " + getName() + " is serving table " + tableNumber + ".";
+    }
+
+    @Override
+    public String displayInfo() {
+        return super.displayInfo() + ", Table: " + tableNumber;
+    }
+
+    public static void main(String[] args) {
+        Chef chef = new Chef("Gordon Ramsay", "C001", "Italian");
+        Waiter waiter = new Waiter("Jane Doe", "W001", 5);
+        System.out.println(chef.displayInfo());
+        System.out.println(chef.performDuties());
+        System.out.println(waiter.displayInfo());
+        System.out.println(waiter.performDuties());
+    }
+}

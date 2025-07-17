@@ -1,0 +1,9 @@
+/**
+ * Interface for generating invoices in the cab service.
+ * Defines methods for creating detailed and final invoices.
+ */
+public interface InvoiceGenerator {
+    String enhanceInvoice();
+    String invoiceService();
+    double getTotalFare();
+}

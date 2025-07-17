@@ -1,0 +1,62 @@
+// Superclass Course
+class Course {
+    private String courseName;
+    private int duration; // in weeks
+
+    public Course(String courseName, int duration) {
+        this.courseName = courseName;
+        this.duration = duration;
+    }
+
+    // Getters
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public String getCourseDetails() {
+        return "Course: " + courseName + ", Duration: " + duration + " weeks";
+    }
+}
+
+// Subclass OnlineCourse extending Course
+class OnlineCourse extends Course {
+    private String platform;
+    private boolean isRecorded;
+
+    public OnlineCourse(String courseName, int duration, String platform, boolean isRecorded) {
+        super(courseName, duration);
+        this.platform = platform;
+        this.isRecorded = isRecorded;
+    }
+
+    @Override
+    public String getCourseDetails() {
+        return super.getCourseDetails() + ", Platform: " + platform + ", Recorded: " + (isRecorded ? "Yes" : "No");
+    }
+}
+
+// Subclass PaidOnlineCourse extending OnlineCourse
+class PaidOnlineCourse extends OnlineCourse {
+    private double fee;
+    private double discount;
+
+    public PaidOnlineCourse(String courseName, int duration, String platform, boolean isRecorded, double fee, double discount) {
+        super(courseName, duration, platform, isRecorded);
+        this.fee = fee;
+        this.discount = discount;
+    }
+
+    @Override
+    public String getCourseDetails() {
+        return super.getCourseDetails() + ", Fee: $" + fee + ", Discount: " + (discount * 100) + "%";
+    }
+
+    public static void main(String[] args) {
+        PaidOnlineCourse course = new PaidOnlineCourse("Java Programming", 8, "Udemy", true, 99.99, 0.1);
+        System.out.println(course.getCourseDetails());
+    }
+}

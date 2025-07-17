@@ -1,0 +1,77 @@
+// Superclass BankAccount
+class BankAccount {
+    private String accountNumber;
+    private double balance;
+
+    public BankAccount(String accountNumber, double balance) {
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+    }
+
+    // Getters
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public String displayAccountType() {
+        return "Generic Account, Balance: $" + balance;
+    }
+}
+
+// Subclass SavingsAccount
+class SavingsAccount extends BankAccount {
+    private double interestRate;
+
+    public SavingsAccount(String accountNumber, double balance, double interestRate) {
+        super(accountNumber, balance);
+        this.interestRate = interestRate;
+    }
+
+    @Override
+    public String displayAccountType() {
+        return "Savings Account, Balance: $" + getBalance() + ", Interest Rate: " + (interestRate * 100) + "%";
+    }
+}
+
+// Subclass CheckingAccount
+class CheckingAccount extends BankAccount {
+    private double withdrawalLimit;
+
+    public CheckingAccount(String accountNumber, double balance, double withdrawalLimit) {
+        super(accountNumber, balance);
+        this.withdrawalLimit = withdrawalLimit;
+    }
+
+    @Override
+    public String displayAccountType() {
+        return "Checking Account, Balance: $" + getBalance() + ", Withdrawal Limit: $" + withdrawalLimit;
+    }
+}
+
+// Subclass FixedDepositAccount
+class FixedDepositAccount extends BankAccount {
+    private int tenure; // in months
+
+    public FixedDepositAccount(String accountNumber, double balance, int tenure) {
+        super(accountNumber, balance);
+        this.tenure = tenure;
+    }
+
+    @Override
+    public String displayAccountType() {
+        return "Fixed Deposit Account, Balance: $" + getBalance() + ", Tenure: " + tenure + " months";
+    }
+
+    public static void main(String[] args) {
+        SavingsAccount savings = new SavingsAccount("SA001", 1000.0, 0.05);
+        CheckingAccount checking = new CheckingAccount("CA001", 500.0, 2000.0);
+        FixedDepositAccount fixed = new FixedDepositAccount("FD001", 10000.0, 12);
+        System.out.println(savings.displayAccountType());
+        System.out.println(checking.displayAccountType());
+        System.out.println(fixed.displayAccountType());
+    }
+}

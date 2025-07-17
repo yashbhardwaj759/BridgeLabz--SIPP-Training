@@ -1,0 +1,43 @@
+// Superclass Device
+class Device {
+    private String deviceId;
+    private boolean status;
+
+    public Device(String deviceId, boolean status) {
+        this.deviceId = deviceId;
+        this.status = status;
+    }
+
+    // Getters
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public String displayStatus() {
+        return "Device ID: " + deviceId + ", Status: " + (status ? "On" : "Off");
+    }
+}
+
+// Subclass Thermostat extending Device
+class Thermostat extends Device {
+    private double temperatureSetting;
+
+    public Thermostat(String deviceId, boolean status, double temperatureSetting) {
+        super(deviceId, status);
+        this.temperatureSetting = temperatureSetting;
+    }
+
+    @Override
+    public String displayStatus() {
+        return super.displayStatus() + ", Temperature: " + temperatureSetting + "°C";
+    }
+
+    public static void main(String[] args) {
+        Thermostat thermostat = new Thermostat("T001", true, 22.5);
+        System.out.println(thermostat.displayStatus());
+    }
+}

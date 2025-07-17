@@ -1,0 +1,58 @@
+import java.util.Scanner;
+import java.time.LocalDate;
+
+/**
+ * Main class for the subscription-based cab service.
+ * Uses composition to integrate RideManager and InvoiceGenerator.
+ */
+public class CabService {
+    private RideManager rideManager;
+    private InvoiceGenerator invoiceGenerator;
+    private String customerId;
+
+    public CabService(String customerId) {
+        this.customerId = customerId;
+        this.rideManager = new RideManagerImpl();
+        this.invoiceGenerator = new InvoiceGeneratorImpl((RideManagerImpl) rideManager, customerId);
+    }
+
+    public void addMultipleRides(Scanner scanner) {
+        rideManager.addMultipleRides(scanner);
+    }
+
+    public void addPremiumRide(Scanner scanner) {
+        rideManager.addPremiumRide(scanner);
+    }
+
+    public String generateEnhancedInvoice() {
+        return invoiceGenerator.enhanceInvoice();
+    }
+
+    public String generateFinalInvoice() {
+        return invoiceGenerator.invoiceService();
+    }
+
+    public double getTotalFare() {
+        return invoiceGenerator.getTotalFare();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter customer ID: ");
+        String customerId = scanner.next();
+
+        CabService cabService = new CabService(customerId);
+
+        System.out.println("Enter multiple rides:");
+        cabService.addMultipleRides(scanner);
+
+        System.out.println("\nEnter premium ride:");
+        cabService.addPremiumRide(scanner);
+
+        System.out.println("\n" + cabService.generateEnhancedInvoice());
+        System.out.println(cabService.generateFinalInvoice());
+
+        scanner.close();
+    }
+}

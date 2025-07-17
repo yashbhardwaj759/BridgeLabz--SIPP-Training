@@ -1,0 +1,45 @@
+// Superclass Book
+class Book {
+    private String title;
+    private int publicationYear;
+
+    public Book(String title, int publicationYear) {
+        this.title = title;
+        this.publicationYear = publicationYear;
+    }
+
+    // Getters
+    public String getTitle() {
+        return title;
+    }
+
+    public int getPublicationYear() {
+        return publicationYear;
+    }
+
+    public String displayInfo() {
+        return "Book: " + title + ", Published: " + publicationYear;
+    }
+}
+
+// Subclass Author extending Book
+class Author extends Book {
+    private String name;
+    private String bio;
+
+    public Author(String title, int publicationYear, String name, String bio) {
+        super(title, publicationYear);
+        this.name = name;
+        this.bio = bio;
+    }
+
+    @Override
+    public String displayInfo() {
+        return super.displayInfo() + "\nAuthor: " + name + "\nBio: " + bio;
+    }
+
+    public static void main(String[] args) {
+        Author author = new Author("Java Programming", 2023, "John Doe", "Expert in programming");
+        System.out.println(author.displayInfo());
+    }
+}

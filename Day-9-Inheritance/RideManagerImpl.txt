@@ -1,0 +1,89 @@
+import java.time.LocalDate;
+import java.util.Scanner;
+
+/**
+ * Implementation of RideManager interface to handle ride-related operations.
+ * Uses composition to manage an array of rides.
+ */
+public class RideManagerImpl implements RideManager {
+    private static final double BASE_FARE = 5.0; // Base fare per ride
+    private static final double PER_KM_RATE = 2.0; // Rate per kilometer
+    private static final double PREMIUM_MULTIPLIER = 1.5; // Premium ride multiplier
+    private static final int MAX_RIDES = 100; // Maximum rides per month
+
+    private Ride[] rides;
+    private int rideCount;
+
+    public RideManagerImpl() {
+        this.rides = new Ride[MAX_RIDES];
+        this.rideCount = 0;
+    }
+
+    @Override
+    public void addRide(double distance, boolean isPremium, LocalDate date) {
+        if (rideCount >= MAX_RIDES) {
+            throw new IllegalStateException("Cannot add more rides, maximum limit reached");
+        }
+        Ride ride = new Ride(distance, isPremium, date);
+        ride.setFare(calculateFare(distance, isPremium));
+        rides[rideCount++] = ride;
+    }
+
+    @Override
+    public void addMultipleRides(Scanner scanner) {
+        System.out.print("Enter number of rides to add: ");
+        int numRides = scanner.nextInt();
+        if (rideCount + numRides > MAX_RIDES) {
+            throw new IllegalStateException("Cannot add more rides, maximum limit reached");
+        }
+
+        for (int i = 0; i < numRides; i++) {
+            System.out.println("Ride " + (i + 1) + ":");
+            System.out.print("Enter distance (km): ");
+            double distance = scanner.nextDouble();
+
+            System.out.print("Is this a premium ride? (true/false): ");
+            boolean isPremium = scanner.nextBoolean();
+
+            System.out.print("Enter date (YYYY-MM-DD): ");
+            String dateStr = scanner.next();
+            LocalDate date = LocalDate.parse(dateStr);
+
+            addRide(distance, isPremium, date);
+        }
+    }
+
+    @Override
+    public void addPremiumRide(Scanner scanner) {
+        if (rideCount >= MAX_RIDES) {
+            throw new IllegalStateException("Cannot add more rides, maximum limit reached");
+        }
+
+        System.out.print("Enter distance for premium ride (km): ");
+        double distance = scanner.nextDouble();
+
+        System.out.print("Enter date (YYYY-MM-DD): ");
+        String dateStr = scanner.next();
+        LocalDate date = LocalDate.parse(dateStr);
+
+        addRide(distance, true, date);
+    }
+
+    @Override
+    public double calculateFare(double distance, boolean isPremium) {
+        double fare = BASE_FARE + (distance * PER_KM_RATE);
+        if (isPremium) {
+            fare *= PREMIUM_MULTIPLIER;
+        }
+        return fare;
+    }
+
+    // Getter for rides (for InvoiceGenerator)
+    public Ride[] getRides() {
+        return rides;
+    }
+
+    public int getRideCount() {
+        return rideCount;
+    }
+}

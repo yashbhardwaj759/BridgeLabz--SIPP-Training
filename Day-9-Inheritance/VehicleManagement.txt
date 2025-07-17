@@ -1,0 +1,76 @@
+// Interface Refuelable
+interface Refuelable {
+    String refuel();
+}
+
+// Superclass Vehicle
+class Vehicle {
+    private double maxSpeed;
+    private String model;
+
+    public Vehicle(double maxSpeed, String model) {
+        this.maxSpeed = maxSpeed;
+        this.model = model;
+    }
+
+    // Getters
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String displayDetails() {
+        return "Model: " + model + ", Max Speed: " + maxSpeed + " km/h";
+    }
+}
+
+// Subclass ElectricVehicle
+class ElectricVehicle extends Vehicle {
+    private double batteryCapacity;
+
+    public ElectricVehicle(double maxSpeed, String model, double batteryCapacity) {
+        super(maxSpeed, model);
+        this.batteryCapacity = batteryCapacity;
+    }
+
+    public String charge() {
+        return "Charging " + getModel() + " with " + batteryCapacity + " kWh battery.";
+    }
+
+    @Override
+    public String displayDetails() {
+        return super.displayDetails() + ", Battery Capacity: " + batteryCapacity + " kWh";
+    }
+}
+
+// Subclass PetrolVehicle implementing Refuelable
+class PetrolVehicle extends Vehicle implements Refuelable {
+    private double fuelCapacity;
+
+    public PetrolVehicle(double maxSpeed, String model, double fuelCapacity) {
+        super(maxSpeed, model);
+        this.fuelCapacity = fuelCapacity;
+    }
+
+    @Override
+    public String refuel() {
+        return "Refueling " + getModel() + " with " + fuelCapacity + " liters of petrol.";
+    }
+
+    @Override
+    public String displayDetails() {
+        return super.displayDetails() + ", Fuel Capacity: " + fuelCapacity + " liters";
+    }
+
+    public static void main(String[] args) {
+        ElectricVehicle ev = new ElectricVehicle(200.0, "Tesla Model S", 100.0);
+        PetrolVehicle pv = new PetrolVehicle(180.0, "Toyota Corolla", 50.0);
+        System.out.println(ev.displayDetails());
+        System.out.println(ev.charge());
+        System.out.println(pv.displayDetails());
+        System.out.println(pv.refuel());
+    }
+}

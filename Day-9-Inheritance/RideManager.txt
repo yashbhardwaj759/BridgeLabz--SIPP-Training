@@ -1,0 +1,13 @@
+import java.util.Scanner;
+import java.time.LocalDate;
+
+/**
+ * Interface for managing rides in the cab service.
+ * Demonstrates guideline #10: using interfaces for flexibility.
+ */
+public interface RideManager {
+    void addRide(double distance, boolean isPremium, LocalDate date);
+    void addMultipleRides(Scanner scanner);
+    void addPremiumRide(Scanner scanner);
+    double calculateFare(double distance, boolean isPremium);
+}

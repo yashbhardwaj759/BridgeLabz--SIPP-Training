@@ -1,0 +1,81 @@
+/**
+ * Implementation of InvoiceGenerator interface to handle invoice-related operations.
+ * Uses composition to access RideManager for ride data.
+ */
+public class InvoiceGeneratorImpl implements InvoiceGenerator {
+    private static final double BONUS_THRESHOLD = 10; // Number of rides for bonus
+    private static final double BONUS_DISCOUNT = 0.1; // 10% discount for bonus
+
+    private RideManagerImpl rideManager;
+    private String customerId;
+    private double totalFare;
+
+    public InvoiceGeneratorImpl(RideManagerImpl rideManager, String customerId) {
+        this.rideManager = rideManager;
+        this.customerId = customerId;
+        this.totalFare = calculateTotalFare();
+    }
+
+    private double calculateTotalFare() {
+        double total = 0.0;
+        Ride[] rides = rideManager.getRides();
+        for (int i = 0; i < rideManager.getRideCount(); i++) {
+            total += rides[i].getFare();
+        }
+        return total;
+    }
+
+    @Override
+    public String enhanceInvoice() {
+        StringBuilder invoice = new StringBuilder();
+        invoice.append("Monthly Invoice for Customer: ").append(customerId).append("\n");
+        invoice.append("----------------------------------------\n");
+        invoice.append(String.format("%-15s %-10s %-10s %-12s\n", 
+            "Date", "Distance", "Type", "Fare"));
+        invoice.append("----------------------------------------\n");
+
+        Ride[] rides = rideManager.getRides();
+        for (int i = 0; i < rideManager.getRideCount(); i++) {
+            Ride ride = rides[i];
+            invoice.append(String.format("%-15s %-10.2f %-10s $%-11.2f\n",
+                ride.getDate().toString(),
+                ride.getDistance(),
+                ride.isPremium() ? "Premium" : "Regular",
+                ride.getFare()));
+        }
+
+        invoice.append("----------------------------------------\n");
+        invoice.append(String.format("Subtotal: $%.2f\n", totalFare));
+
+        double finalFare = applyBonus();
+        invoice.append(String.format("After Bonus: $%.2f\n", finalFare));
+
+        return invoice.toString();
+    }
+
+    @Override
+    public String invoiceService() {
+        StringBuilder invoice = new StringBuilder();
+        invoice.append("Final Monthly Invoice\n");
+        invoice.append("Customer ID: ").append(customerId).append("\n");
+        invoice.append("Total Rides: ").append(rideManager.getRideCount()).append("\n");
+        invoice.append("Total Fare: $").append(String.format("%.2f", totalFare)).append("\n");
+
+        double finalFare = applyBonus();
+        invoice.append("Final Amount Due: $").append(String.format("%.2f", finalFare)).append("\n");
+
+        return invoice.toString();
+    }
+
+    @Override
+    public double getTotalFare() {
+        return applyBonus();
+    }
+
+    private double applyBonus() {
+        if (rideManager.getRideCount() >= BONUS_THRESHOLD) {
+            return totalFare * (1 - BONUS_DISCOUNT);
+        }
+        return totalFare;
+    }
+}

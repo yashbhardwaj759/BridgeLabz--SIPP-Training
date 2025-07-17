@@ -1,0 +1,33 @@
+import java.util.Scanner;
+
+/**
+ * Demonstrates guideline #14: polymorphism via interface references.
+ * Uses interface types for flexibility.
+ */
+public class PolymorphicCabService {
+    private RideManager rideManager;
+    private InvoiceGenerator invoiceGenerator;
+    private String customerId;
+
+    public PolymorphicCabService(String customerId, RideManager rideManager, InvoiceGenerator invoiceGenerator) {
+        this.customerId = customerId;
+        this.rideManager = rideManager;
+        this.invoiceGenerator = invoiceGenerator;
+    }
+
+    public void addMultipleRides(Scanner scanner) {
+        rideManager.addMultipleRides(scanner);
+    }
+
+    public void addPremiumRide(Scanner scanner) {
+        rideManager.addPremiumRide(scanner);
+    }
+
+    public String generateEnhancedInvoice() {
+        return invoiceGenerator.enhanceInvoice();
+    }
+
+    public String generateFinalInvoice() {
+        return invoiceGenerator.invoiceService();
+    }
+}

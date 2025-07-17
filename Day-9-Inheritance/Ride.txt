@@ -1,0 +1,40 @@
+import java.time.LocalDate;
+
+/**
+ * Represents a single ride in the cab service.
+ * Stores ride details such as distance, premium status, date, and fare.
+ * Demonstrates guideline #7: private fields with getters/setters.
+ */
+public class Ride {
+    private double distance; // in kilometers
+    private boolean isPremium;
+    private LocalDate date;
+    private double fare;
+
+    public Ride(double distance, boolean isPremium, LocalDate date) {
+        this.distance = distance;
+        this.isPremium = isPremium;
+        this.date = date;
+        this.fare = 0.0;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public boolean isPremium() {
+        return isPremium;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public double getFare() {
+        return fare;
+    }
+
+    public void setFare(double fare) {
+        this.fare = fare;
+    }
+}

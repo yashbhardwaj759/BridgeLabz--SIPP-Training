@@ -1,0 +1,60 @@
+import java.time.LocalDate;
+
+// Base class Order
+class Order {
+    private String orderId;
+    private LocalDate orderDate;
+
+    public Order(String orderId, LocalDate orderDate) {
+        this.orderId = orderId;
+        this.orderDate = orderDate;
+    }
+
+    // Getters
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public String getOrderStatus() {
+        return "Order Placed on " + orderDate;
+    }
+}
+
+// Subclass ShippedOrder extending Order
+class ShippedOrder extends Order {
+    private String trackingNumber;
+
+    public ShippedOrder(String orderId, LocalDate orderDate, String trackingNumber) {
+        super(orderId, orderDate);
+        this.trackingNumber = trackingNumber;
+    }
+
+    @Override
+    public String getOrderStatus() {
+        return super.getOrderStatus() + ", Shipped with Tracking: " + trackingNumber;
+    }
+}
+
+// Subclass DeliveredOrder extending ShippedOrder
+class DeliveredOrder extends ShippedOrder {
+    private LocalDate deliveryDate;
+
+    public DeliveredOrder(String orderId, LocalDate orderDate, String trackingNumber, LocalDate deliveryDate) {
+        super(orderId, orderDate, trackingNumber);
+        this.deliveryDate = deliveryDate;
+    }
+
+    @Override
+    public String getOrderStatus() {
+        return super.getOrderStatus() + ", Delivered on " + deliveryDate;
+    }
+
+    public static void main(String[] args) {
+        DeliveredOrder order = new DeliveredOrder("ORD001", LocalDate.of(2025, 7, 1), "TRK123", LocalDate.of(2025, 7, 3));
+        System.out.println(order.getOrderStatus());
+    }
+}
