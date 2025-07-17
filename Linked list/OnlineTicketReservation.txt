@@ -1,0 +1,183 @@
+import java.util.Scanner;
+
+/**
+ * Circular Linked List for Online Ticket Reservation System.
+ * Implements add, remove, display, search, and count operations.
+ * Adapts cab service methods: enhanceInvoice (displayTickets).
+ * Follows LinkedList best practices: avoid infinite loops, tail management, modular code.
+ * Guideline #11: Documented behavior.
+ */
+public class OnlineTicketReservation {
+    static class Node {
+        int ticketId;
+        String customerName;
+        String movieName;
+        int seatNumber;
+        String bookingTime;
+        Node next;
+
+        Node(int ticketId, String customerName, String movieName, int seatNumber, String bookingTime) {
+            this.ticketId = ticketId;
+            this.customerName = customerName;
+            this.movieName = movieName;
+            this.seatNumber = seatNumber;
+            this.bookingTime = bookingTime;
+            this.next = null;
+        }
+    }
+
+    private Node last;
+
+    public OnlineTicketReservation() {
+        this.last = null;
+    }
+
+    // Add at end: O(1)
+    public void addTicket(int ticketId, String customerName, String movieName, int seatNumber, String bookingTime) {
+        Node newNode = new Node(ticketId, customerName, movieName, seatNumber, bookingTime);
+        if (last == null) {
+            last = newNode;
+            newNode.next = last;
+            return;
+        }
+        newNode.next = last.next;
+        last.next = newNode;
+        last = newNode;
+    }
+
+    // Remove by ticket ID: O(n)
+    public void removeByTicketId(int ticketId) {
+        if (last == null) {
+            System.out.println("No tickets to remove");
+            return;
+        }
+        Node current = last.next;
+        Node prev = last;
+        do {
+            if (current.ticketId == ticketId) {
+                if (current == last && current.next == last) {
+                    last = null;
+                    return;
+                }
+                prev.next = current.next;
+                if (current == last) {
+                    last = prev;
+                }
+                current.next = null; // Memory management
+                return;
+            }
+            prev = current;
+            current = current.next;
+        } while (current != last.next);
+        System.out.println("Ticket ID not found");
+    }
+
+    // Display tickets: O(n)
+    public void displayTickets() {
+        if (last == null) {
+            System.out.println("No tickets to display");
+            return;
+        }
+        Node current = last.next;
+        System.out.println("Ticket Reservations:");
+        System.out.printf("%-10s %-15s %-15s %-10s %-15s\n", "ID", "Customer", "Movie", "Seat", "Time");
+        System.out.println("-----------------------------------------------------");
+        do {
+            System.out.printf("%-10d %-15s %-15s %-10d %-15s\n",
+                    current.ticketId, current.customerName, current.movieName,
+                    current.seatNumber, current.bookingTime);
+            current = current.next;
+        } while (current != last.next);
+    }
+
+    // Search by customer name or movie name: O(n)
+    public void searchByCustomerOrMovie(String customerName, String movieName) {
+        if (last == null) {
+            System.out.println("No tickets to search");
+            return;
+        }
+        Node current = last.next;
+        boolean found = false;
+        do {
+            if (current.customerName.equalsIgnoreCase(customerName) ||
+                    current.movieName.equalsIgnoreCase(movieName)) {
+                System.out.printf("Found: ID: %d, Customer: %s, Movie: %s, Seat: %d, Time: %s\n",
+                        current.ticketId, current.customerName, current.movieName,
+                        current.seatNumber, current.bookingTime);
+                found = true;
+            }
+            current = current.next;
+        } while (current != last.next);
+        if (!found) {
+            System.out.println("No matching tickets found");
+        }
+    }
+
+    // Count tickets: O(n)
+    public int countTickets() {
+        if (last == null) {
+            return 0;
+        }
+        int count = 0;
+        Node current = last.next;
+        do {
+            count++;
+            current = current.next;
+        } while (current != last.next);
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        OnlineTicketReservation list = new OnlineTicketReservation();
+
+        while (true) {
+            System.out.println("\n1. Add Ticket\n2. Remove by Ticket ID\n3. Display Tickets\n" +
+                            "4. Search by Customer/Movie\n5. Count Tickets\n6. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Ticket ID: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Customer Name: ");
+                    String customer = scanner.nextLine();
+                    System.out.print("Enter Movie Name: ");
+                    String movie = scanner.nextLine();
+                    System.out.print("Enter Seat Number: ");
+                    int seat = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Booking Time: ");
+                    String time = scanner.nextLine();
+                    list.addTicket(id, customer, movie, seat, time);
+                    break;
+                case 2:
+                    System.out.print("Enter Ticket ID: ");
+                    id = scanner.nextInt();
+                    list.removeByTicketId(id);
+                    break;
+                case 3:
+                    list.displayTickets();
+                    break;
+                case 4:
+                    System.out.print("Enter Customer Name: ");
+                    customer = scanner.nextLine();
+                    System.out.print("Enter Movie Name: ");
+                    movie = scanner.nextLine();
+                    list.searchByCustomerOrMovie(customer, movie);
+                    break;
+                case 5:
+                    System.out.println("Total Tickets: " + list.countTickets());
+                    break;
+                case 6:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}

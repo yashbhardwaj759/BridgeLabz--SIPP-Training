@@ -1,0 +1,124 @@
+import java.util.Scanner;
+
+/**
+ * Doubly Linked List for Undo/Redo Functionality in Text Editor.
+ * Implements add state, undo, redo, and display operations.
+ * Follows LinkedList best practices: head/tail management, boundary handling, memory management.
+ * Guideline #7: Private fields.
+ */
+public class TextEditorUndoRedo {
+    static class Node {
+        String textState;
+        Node next;
+        Node prev;
+
+        Node(String textState) {
+            this.textState = textState;
+            this.next = null;
+            this.prev = null;
+        }
+    }
+
+    private Node head;
+    private Node tail;
+    private Node current;
+    private int size;
+    private static final int MAX_HISTORY = 10;
+
+    public TextEditorUndoRedo() {
+        this.head = null;
+        this.tail = null;
+        this.current = null;
+        this.size = 0;
+    }
+
+    // Add new state: O(1)
+    public void addState(String textState) {
+        Node newNode = new Node(textState);
+        if (size >= MAX_HISTORY) {
+            // Remove oldest state
+            head = head.next;
+            if (head != null) {
+                head.prev = null;
+            } else {
+                tail = null;
+            }
+            size--;
+        }
+        if (tail == null) {
+            head = tail = current = newNode;
+        } else {
+            // Truncate redo history
+            tail.next = null;
+            newNode.prev = tail;
+            tail.next = newNode;
+            tail = newNode;
+            current = tail;
+        }
+        size++;
+    }
+
+    // Undo: O(1)
+    public void undo() {
+        if (current == null || current.prev == null) {
+            System.out.println("Nothing to undo");
+            return;
+        }
+        current = current.prev;
+        System.out.println("Current State: " + current.textState);
+    }
+
+    // Redo: O(1)
+    public void redo() {
+        if (current == null || current.next == null) {
+            System.out.println("Nothing to redo");
+            return;
+        }
+        current = current.next;
+        System.out.println("Current State: " + current.textState);
+    }
+
+    // Display current state: O(1)
+    public void displayCurrentState() {
+        if (current == null) {
+            System.out.println("No state available");
+            return;
+        }
+        System.out.println("Current State: " + current.textState);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        TextEditorUndoRedo editor = new TextEditorUndoRedo();
+
+        while (true) {
+            System.out.println("\n1. Add Text State\n2. Undo\n3. Redo\n" +
+                            "4. Display Current State\n5. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Text State: ");
+                    String state = scanner.nextLine();
+                    editor.addState(state);
+                    break;
+                case 2:
+                    editor.undo();
+                    break;
+                case 3:
+                    editor.redo();
+                    break;
+                case 4:
+                    editor.displayCurrentState();
+                    break;
+                case 5:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}

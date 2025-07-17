@@ -1,0 +1,287 @@
+import java.util.Scanner;
+
+/**
+ * Doubly Linked List for Library Management System.
+ * Implements add, remove, search, update, display, and count operations.
+ * Follows LinkedList best practices: head/tail management, boundary handling, modular code.
+ * Guideline #7: Private fields.
+ */
+public class LibraryManagementSystem {
+    static class Node {
+        String title;
+        String author;
+        String genre;
+        int bookId;
+        boolean isAvailable;
+        Node next;
+        Node prev;
+
+        Node(String title, String author, String genre, int bookId, boolean isAvailable) {
+            this.title = title;
+            this.author = author;
+            this.genre = genre;
+            this.bookId = bookId;
+            this.isAvailable = isAvailable;
+            this.next = null;
+            this.prev = null;
+        }
+    }
+
+    private Node head;
+    private Node tail;
+
+    public LibraryManagementSystem() {
+        this.head = null;
+        this.tail = null;
+    }
+
+    // Add at beginning: O(1)
+    public void addAtBeginning(String title, String author, String genre, int bookId, boolean isAvailable) {
+        Node newNode = new Node(title, author, genre, bookId, isAvailable);
+        if (head == null) {
+            head = tail = newNode;
+            return;
+        }
+        newNode.next = head;
+        head.prev = newNode;
+        head = newNode;
+    }
+
+    // Add at end: O(1)
+    public void addAtEnd(String title, String author, String genre, int bookId, boolean isAvailable) {
+        Node newNode = new Node(title, author, genre, bookId, isAvailable);
+        if (head == null) {
+            head = tail = newNode;
+            return;
+        }
+        tail.next = newNode;
+        newNode.prev = tail;
+        tail = newNode;
+    }
+
+    // Add at position: O(n)
+    public void addAtPosition(String title, String author, String genre, int bookId, boolean isAvailable, int position) {
+        if (position < 1) {
+            System.out.println("Invalid position");
+            return;
+        }
+        if (position == 1) {
+            addAtBeginning(title, author, genre, bookId, isAvailable);
+            return;
+        }
+        Node newNode = new Node(title, author, genre, bookId, isAvailable);
+        Node current = head;
+        for (int i = 1; i < position - 1 && current != null; i++) {
+            current = current.next;
+        }
+        if (current == null) {
+            System.out.println("Position out of bounds");
+            return;
+        }
+        newNode.next = current.next;
+        newNode.prev = current;
+        if (current.next != null) {
+            current.next.prev = newNode;
+        } else {
+            tail = newNode;
+        }
+        current.next = newNode;
+    }
+
+    // Remove by book ID: O(n)
+    public void removeByBookId(int bookId) {
+        if (head == null) {
+            System.out.println("Library is empty");
+            return;
+        }
+        Node current = head;
+        while (current != null && current.bookId != bookId) {
+            current = current.next;
+        }
+        if (current == null) {
+            System.out.println("Book ID not found");
+            return;
+        }
+        if (current == head) {
+            head = head.next;
+            if (head != null) {
+                head.prev = null;
+            } else {
+                tail = null;
+            }
+        } else if (current == tail) {
+            tail = tail.prev;
+            tail.next = null;
+        } else {
+            current.prev.next = current.next;
+            current.next.prev = current.prev;
+        }
+        current.next = current.prev = null; // Memory management
+    }
+
+    // Search by title or author: O(n)
+    public void searchByTitleOrAuthor(String title, String author) {
+        Node current = head;
+        boolean found = false;
+        while (current != null) {
+            if (current.title.equalsIgnoreCase(title) || current.author.equalsIgnoreCase(author)) {
+                System.out.printf("Found: Title: %s, Author: %s, Genre: %s, ID: %d, Available: %s\n",
+                        current.title, current.author, current.genre, current.bookId,
+                        current.isAvailable ? "Yes" : "No");
+                found = true;
+            }
+            current = current.next;
+        }
+        if (!found) {
+            System.out.println("No matching books found");
+        }
+    }
+
+    // Update availability by book ID: O(n)
+    public void updateAvailability(int bookId, boolean isAvailable) {
+        Node current = head;
+        while (current != null) {
+            if (current.bookId == bookId) {
+                current.isAvailable = isAvailable;
+                System.out.println("Availability updated for Book ID " + bookId);
+                return;
+            }
+            current = current.next;
+        }
+        System.out.println("Book ID not found");
+    }
+
+    // Display forward: O(n)
+    public void displayForward() {
+        if (head == null) {
+            System.out.println("No books to display");
+            return;
+        }
+        Node current = head;
+        System.out.println("Books (Forward):");
+        while (current != null) {
+            System.out.printf("Title: %s, Author: %s, Genre: %s, ID: %d, Available: %s\n",
+                    current.title, current.author, current.genre, current.bookId,
+                    current.isAvailable ? "Yes" : "No");
+            current = current.next;
+        }
+    }
+
+    // Display reverse: O(n)
+    public void displayReverse() {
+        if (tail == null) {
+            System.out.println("No books to display");
+            return;
+        }
+        Node current = tail;
+        System.out.println("Books (Reverse):");
+        while (current != null) {
+            System.out.printf("Title: %s, Author: %s, Genre: %s, ID: %d, Available: %s\n",
+                    current.title, current.author, current.genre, current.bookId,
+                    current.isAvailable ? "Yes" : "No");
+            current = current.prev;
+        }
+    }
+
+    // Count books: O(n)
+    public int countBooks() {
+        int count = 0;
+        Node current = head;
+        while (current != null) {
+            count++;
+            current = current.next;
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        LibraryManagementSystem list = new LibraryManagementSystem();
+
+        while (true) {
+            System.out.println("\n1. Add at Beginning\n2. Add at End\n3. Add at Position\n" +
+                    "4. Remove by Book ID\n5. Search by Title/Author\n6. Update Availability\n" +
+                    "7. Display Forward\n8. Display Reverse\n9. Count Books\n10. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Title: ");
+                    String title = scanner.nextLine();
+                    System.out.print("Enter Author: ");
+                    String author = scanner.nextLine();
+                    System.out.print("Enter Genre: ");
+                    String genre = scanner.nextLine();
+                    System.out.print("Enter Book ID: ");
+                    int id = scanner.nextInt();
+                    System.out.print("Is Available? (true/false): ");
+                    boolean available = scanner.nextBoolean();
+                    list.addAtBeginning(title, author, genre, id, available);
+                    break;
+                case 2:
+                    System.out.print("Enter Title: ");
+                    title = scanner.nextLine();
+                    System.out.print("Enter Author: ");
+                    author = scanner.nextLine();
+                    System.out.print("Enter Genre: ");
+                    genre = scanner.nextLine();
+                    System.out.print("Enter Book ID: ");
+                    id = scanner.nextInt();
+                    System.out.print("Is Available? (true/false): ");
+                    available = scanner.nextBoolean();
+                    list.addAtEnd(title, author, genre, id, available);
+                    break;
+                case 3:
+                    System.out.print("Enter Title: ");
+                    title = scanner.nextLine();
+                    System.out.print("Enter Author: ");
+                    author = scanner.nextLine();
+                    System.out.print("Enter Genre: ");
+                    genre = scanner.nextLine();
+                    System.out.print("Enter Book ID: ");
+                    id = scanner.nextInt();
+                    System.out.print("Is Available? (true/false): ");
+                    available = scanner.nextBoolean();
+                    System.out.print("Enter Position: ");
+                    int pos = scanner.nextInt();
+                    list.addAtPosition(title, author, genre, id, available, pos);
+                    break;
+                case 4:
+                    System.out.print("Enter Book ID: ");
+                    id = scanner.nextInt();
+                    list.removeByBookId(id);
+                    break;
+                case 5:
+                    System.out.print("Enter Title: ");
+                    title = scanner.nextLine();
+                    System.out.print("Enter Author: ");
+                    author = scanner.nextLine();
+                    list.searchByTitleOrAuthor(title, author);
+                    break;
+                case 6:
+                    System.out.print("Enter Book ID: ");
+                    id = scanner.nextInt();
+                    System.out.print("Is Available? (true/false): ");
+                    available = scanner.nextBoolean();
+                    list.updateAvailability(id, available);
+                    break;
+                case 7:
+                    list.displayForward();
+                    break;
+                case 8:
+                    list.displayReverse();
+                    break;
+                case 9:
+                    System.out.println("Total Books: " + list.countBooks());
+                    break;
+                case 10:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}

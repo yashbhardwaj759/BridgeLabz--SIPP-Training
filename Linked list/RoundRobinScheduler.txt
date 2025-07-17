@@ -1,0 +1,187 @@
+import java.util.Scanner;
+
+/**
+ * Circular Linked List for Round Robin Scheduling Algorithm.
+ * Implements add, remove, simulate, display, and calculate times operations.
+ * Adapts cab service methods: multipleRides (simulateScheduling).
+ * Follows LinkedList best practices: avoid infinite loops, tail management, modular code.
+ * Guideline #11: Documented behavior.
+ */
+public class RoundRobinScheduler {
+    static class Node {
+        int processId;
+        int burstTime;
+        int priority;
+        Node next;
+
+        Node(int processId, int burstTime, int priority) {
+            this.processId = processId;
+            this.burstTime = burstTime;
+            this.priority = priority;
+            this.next = null;
+        }
+    }
+
+    private Node last;
+    private int timeQuantum;
+
+    public RoundRobinScheduler(int timeQuantum) {
+        this.last = null;
+        this.timeQuantum = timeQuantum;
+    }
+
+    // Add at end: O(1)
+    public void addProcess(int processId, int burstTime, int priority) {
+        Node newNode = new Node(processId, burstTime, priority);
+        if (last == null) {
+            last = newNode;
+            newNode.next = last;
+            return;
+        }
+        newNode.next = last.next;
+        last.next = newNode;
+        last = newNode;
+    }
+
+    // Remove by process ID: O(n)
+    public void removeByProcessId(int processId) {
+        if (last == null) {
+            System.out.println("No processes in queue");
+            return;
+        }
+        Node current = last.next;
+        Node prev = last;
+        do {
+            if (current.processId == processId) {
+                if (current == last && current.next == last) {
+                    last = null;
+                    return;
+                }
+                prev.next = current.next;
+                if (current == last) {
+                    last = prev;
+                }
+                current.next = null; // Memory management
+                return;
+            }
+            prev = current;
+            current = current.next;
+        } while (current != last.next);
+        System.out.println("Process ID not found");
+    }
+
+    // Simulate scheduling: O(n * totalBurstTime)
+    public void simulateScheduling() {
+        if (last == null) {
+            System.out.println("No processes to schedule");
+            return;
+        }
+        int[] waitingTime = new int[100]; // Assuming max 100 processes
+        int[] turnAroundTime = new int[100];
+        int[] remainingTime = new int[100];
+        int processCount = 0;
+        Node current = last.next;
+        do {
+            remainingTime[current.processId] = current.burstTime;
+            processCount++;
+            current = current.next;
+        } while (current != last.next);
+
+        int currentTime = 0;
+        while (processCount > 0) {
+            current = last.next;
+            Node prev = last;
+            do {
+                if (remainingTime[current.processId] > 0) {
+                    int time = Math.min(timeQuantum, remainingTime[current.processId]);
+                    remainingTime[current.processId] -= time;
+                    currentTime += time;
+                    if (remainingTime[current.processId] == 0) {
+                        processCount--;
+                        turnAroundTime[current.processId] = currentTime;
+                        waitingTime[current.processId] = turnAroundTime[current.processId] - current.burstTime;
+                        prev.next = current.next;
+                        if (current == last) {
+                            last = prev;
+                        }
+                        current.next = null; // Memory management
+                    }
+                }
+                prev = current;
+                current = current.next;
+            } while (current != last.next && processCount > 0);
+        }
+
+        // Display results
+        System.out.println("Scheduling Results:");
+        double avgWaiting = 0.0, avgTurnAround = 0.0;
+        for (int i = 0; i < 100; i++) {
+            if (waitingTime[i] != 0 || turnAroundTime[i] != 0) {
+                System.out.printf("Process %d: Waiting Time: %d, Turn-Around Time: %d\n",
+                        i, waitingTime[i], turnAroundTime[i]);
+                avgWaiting += waitingTime[i];
+                avgTurnAround += turnAroundTime[i];
+            }
+        }
+        System.out.printf("Average Waiting Time: %.2f\n", avgWaiting / processCount);
+        System.out.printf("Average Turn-Around Time: %.2f\n", avgTurnAround / processCount);
+    }
+
+    // Display processes: O(n)
+    public void displayProcesses() {
+        if (last == null) {
+            System.out.println("No processes to display");
+            return;
+        }
+        Node current = last.next;
+        System.out.println("Processes:");
+        do {
+            System.out.printf("ID: %d, Burst Time: %d, Priority: %d\n",
+                    current.processId, current.burstTime, current.priority);
+            current = current.next;
+        } while (current != last.next);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Time Quantum: ");
+        int timeQuantum = scanner.nextInt();
+        RoundRobinScheduler scheduler = new RoundRobinScheduler(timeQuantum);
+
+        while (true) {
+            System.out.println("\n1. Add Process\n2. Remove Process\n3. Simulate Scheduling\n" +
+                    "4. Display Processes\n5. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Process ID: ");
+                    int id = scanner.nextInt();
+                    System.out.print("Enter Burst Time: ");
+                    int burst = scanner.nextInt();
+                    System.out.print("Enter Priority: ");
+                    int priority = scanner.nextInt();
+                    scheduler.addProcess(id, burst, priority);
+                    break;
+                case 2:
+                    System.out.print("Enter Process ID: ");
+                    id = scanner.nextInt();
+                    scheduler.removeByProcessId(id);
+                    break;
+                case 3:
+                    scheduler.simulateScheduling();
+                    break;
+                case 4:
+                    scheduler.displayProcesses();
+                    break;
+                case 5:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}

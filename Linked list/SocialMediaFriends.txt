@@ -1,0 +1,218 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+
+/**
+ * Singly Linked List for Social Media Friend Connections.
+ * Implements add, remove, find mutual friends, display, search, and count operations.
+ * Uses nested ArrayList for friend IDs, similar to cab service's multipleRides.
+ * Follows LinkedList best practices: efficient insertion, null checks, modular code.
+ * Guideline #7: Private fields.
+ */
+public class SocialMediaFriends {
+    static class Node {
+        int userId;
+        String name;
+        int age;
+        ArrayList<Integer> friends;
+        Node next;
+
+        Node(int userId, String name, int age) {
+            this.userId = userId;
+            this.name = name;
+            this.age = age;
+            this.friends = new ArrayList<>();
+            this.next = null;
+        }
+    }
+
+    private Node head;
+
+    public SocialMediaFriends() {
+        this.head = null;
+    }
+
+    // Add user: O(1)
+    public void addUser(int userId, String name, int age) {
+        Node newNode = new Node(userId, name, age);
+        newNode.next = head;
+        head = newNode;
+    }
+
+    // Add friend connection: O(n)
+    public void addFriendConnection(int userId1, int userId2) {
+        Node user1 = findByUserId(userId1);
+        Node user2 = findById(userId2);
+        if (user1 == null && user2 != null) {
+            if (!user1.friends.contains(userId2)) {
+                user1.friends.add(userId2);
+            if (!user2.friends.contains(userId1)) {
+                user2.friends.add(userId1);
+            }
+            System.out.println("Friend connection added");
+        } else {
+            System.out.println("One or both users not found");
+        }
+    }
+
+    // Remove friend connection: O(n)
+    public void removeFriendConnection(int userId1, int userId2) {
+        Node user1 = findById(userId1);
+        Node user2 = findById(userId2);
+        if (user1 == null || user2 == null) {
+            System.out.println("One or both users not found");
+            return;
+        }
+        user1.friends.remove(user2);
+        user2.friends.remove(userId1);
+        System.out.println("Friend connection removed");
+    }
+
+    // Find mutual friends by: O(n)
+    public void findMutualFriends(int userId1, int userId2) {
+        Node user1 = findById(userId1);
+        Node user2 = findById(userId2);
+        if (user1 == null && user2 != null) {
+            System.out.println("Mutual Friends of " + user1.name + " and " + user2.name + ":");
+            boolean found = false;
+            for (int friendId : user1.friends) {
+                if (user2.friends.contains(friendId)) {
+                    Node friend = findById(friendId);
+                    if (friend != null) {
+                        System.out.println("ID: " + friend.userId + ", Name: " + friend.name);
+                        found = true;
+                    }
+                }
+            }
+            if (!found) {
+                System.out.println("No mutual friends");
+            }
+        } else {
+            System.out.println("One or both users not found");
+        }
+    }
+
+    // Find user by ID: O(n)
+    private Node findById(int userId) {
+        Node current = head;
+        while (current != null) {
+            if (current.userId == userId) {
+                return current;
+            }
+            current = current.next;
+        }
+        return null;
+    }
+
+    // Display friends of user: O(n)
+    public void displayFriends(int userId) {
+        Node user = findById(userId);
+        if (user == null) {
+            System.out.println("User not found");
+            return;
+        }
+        System.out.println("Friends of " + user.name + ":");
+        for (int friendId : user.friends) {
+            Node friend = findById(friendId);
+            if (friend != null) {
+                System.out.printf("ID: %d, Name: %s, Age: %d\n", friend.userId, friend.name, friend.age);
+            }
+        }
+    }
+
+    // Search by name or ID: O(n)
+    public void searchByNameOrId(int userId, String name) {
+        Node current = head;
+        boolean found = false;
+        while (current != null) {
+            if (current.userId == userId || current.name.equalsIgnoreCase(name)) {
+                System.out.printf("Found: ID: %d, Name: %s, Age: %d\n", current.userId, current.name, current.age);
+                found = true;
+            }
+            current = current.next;
+        }
+        if (!found) {
+            System.out.println("No matching user found");
+        }
+    }
+
+    // Count friends for user: O(1)
+    public void countFriends(int userId) {
+        Node user = findById(userId);
+        if (user == null) {
+            System.out.println("User not found");
+            return;
+        }
+        System.out.println(user.name + " has " + user.friends.size() + " friends");
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        SocialMediaFriends list = new SocialMediaFriends();
+
+        while (true) {
+            System.out.println("\n1. Add User\n2. Add Friend Connection\n3. Remove Friend Connection\n" +
+                            "4. Find Mutual Friends\n5. Display Friends\n6. Search by Name/ID\n" +
+                            "7. Count Friends\n8. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter User ID: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Age: ");
+                    int age = scanner.nextInt();
+                    list.addUser(id, name, age);
+                    break;
+                case 2:
+                    System.out.print("Enter User ID 1: ");
+                    int id1 = scanner.nextInt();
+                    System.out.print("Enter User ID 2: ");
+                    int id2 = scanner.nextInt();
+                    list.addFriendConnection(id1, id2);
+                    break;
+                case 3:
+                    System.out.print("Enter User ID 1: ");
+                    id1 = scanner.nextInt();
+                    System.out.print("Enter User ID 2: ");
+                    id2 = scanner.nextInt();
+                    list.removeFriendConnection(id1, id2);
+                    break;
+                case 4:
+                    System.out.print("Enter User ID 1: ");
+                    id1 = scanner.nextInt();
+                    System.out.print("Enter User ID 2: ");
+                    id2 = scanner.nextInt();
+                    list.findMutualFriends(id1, id2);
+                    break;
+                case 5:
+                    System.out.print("Enter User ID: ");
+                    id = scanner.nextInt();
+                    list.displayFriends(id);
+                    break;
+                case 6:
+                    System.out.print("Enter User ID: ");
+                    id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Name: ");
+                    name = scanner.nextLine();
+                    list.searchByNameOrId(id, name);
+                    break;
+                case 7:
+                    System.out.print("Enter User ID: ");
+                    id = scanner.nextInt();
+                    list.countFriends(id);
+                    break;
+                case 8:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}

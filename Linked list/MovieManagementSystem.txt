@@ -1,0 +1,507 @@
+import java.util.Scanner;
+
+/**
+ * Doubly Linked List for Movie Management System.
+ * Implements add, remove, search, display, and update operations.
+ * Follows LinkedList best practices: head/tail management, null checks, memory management.
+ * Guideline #7: Private fields.
+ */
+public class MovieManagementSystem {
+    static class Node {
+        String title;
+        String director;
+        int year;
+        double rating;
+        Node next;
+        Node prev;
+
+        Node(String title, String director, int year, double rating) {
+            this.title = title;
+            this.director = director;
+            this.year = year;
+            this.rating = rating;
+            this.next = null;
+            this.prev = null;
+        }
+    }
+
+    private Node head;
+    private Node tail;
+
+    public MovieManagementSystem() {
+        this.head = null;
+        this.tail = null;
+    }
+
+    // Add at beginning: O(1)
+    public void addAtBeginning(String title, String director, int year, double rating) {
+        Node newNode = new Node(title, director, year, rating);
+        if (head == null) {
+            head = tail = newNode;
+            return;
+        }
+        newNode.next = head;
+        head.prev = newNode;
+        head = newNode;
+    }
+
+    // Add at end: O(1)
+    public void addAtEnd(String title, String director, int year, double rating) {
+        Node newNode = new Node(title, director, year, rating);
+        if (head == null) {
+            head = tail = newNode;
+            return;
+        }
+        tail.next = newNode;
+        newNode.prev = tail;
+        tail = newNode;
+    }
+
+    // Add at position: O(n)
+    public void addAtPosition(String title, String director, int year, double rating, int position) {
+        if (position < 1) {
+            System.out.println("Invalid position");
+            return;
+        }
+        if (position == 1) {
+            addAtBeginning(title, director, year, rating);
+            return;
+        }
+        Node newNode = new Node(title, director, year, rating);
+        Node current = head;
+        for (int i = 1; i < position - 1 && current != null; i++) {
+            current = current.next;
+        }
+        if (current == null) {
+            System.out.println("Position out of bounds");
+            return;
+        }
+        newNode.next = current.next;
+        newNode.prev = current;
+        if (current.next != null) {
+            current.next.prev = newNode;
+        } else {
+            tail = newNode;
+        }
+        current.next = newNode;
+    }
+
+    // Remove by title: O(n)
+    public void removeByTitle(String title) {
+        if (head == null) {
+            System.out.println("List is empty");
+            return;
+        }
+        Node current = head;
+        while (current != null && !current.title.equalsIgnoreCase(title)) {
+            current = current.next;
+        }
+        if (current == null) {
+            System.out.println("Movie not found");
+            return;
+        }
+        if (current == head) {
+            head = head.next;
+            if (head != null) {
+                head.prev = null;
+            } else {
+                tail = null;
+            }
+        } else if (current == tail) {
+            tail = tail.prev;
+            tail.next = null;
+        } else {
+            current.prev.next = current.next;
+            current.next.prev = current.prev;
+        }
+        current.next = current.prev = null; // Memory management
+    }
+
+    // Search by director or rating: O(n)
+    public void searchByDirectorOrRating(String director, double rating) {
+        Node current = head;
+        boolean found = false;
+        while (current != null) {
+            if (current.director.equalsIgnoreCase(director) || current.rating == rating) {
+                System.out.printf("Title: %s, Director: %s, Year: %d, Rating: %.1f\n",
+                        current.title, current.director, current.year, current.rating);
+                found = true;
+            }
+            current = current.next;
+        }
+        if (!found) {
+            System.out.println("No matching movies found");
+        }
+    }
+
+    // Update rating by title: O(n)
+    public void updateRating(String title, double newRating) {
+        Node current = head;
+        while (current != null) {
+            if (current.title.equalsIgnoreCase(title)) {
+                current.rating = newRating;
+                System.out.println("Rating updated for " + title);
+                return;
+            }
+            current = current.next;
+        }
+        System.out.println("Movie not found");
+    }
+
+    // Display forward: O(n)
+    public void displayForward() {
+        if (head == null) {
+            System.out.println("No movies to display");
+            return;
+        }
+        Node current = head;
+        System.out.println("Movies (Forward):");
+        while (current != null) {
+            System.out.printf("Title: %s, Director: %s, Year: %d, Rating: %.1f\n",
+                    current.title, current.director, current.year, current.rating);
+            current = current.next;
+        }
+    }
+
+    // Display reverse: O(n)
+    public void displayReverse() {
+        if (tail == null) {
+            System.out.println("No movies to display");
+            return;
+        }
+        Node current = tail;
+        System.out.println("Movies (Reverse):");
+        while (current != null) {
+            System.out.printf("Title: %s, Director: %s, Year: %d, Rating: %.1f\n",
+                    current.title, current.director, current.year, current.rating);
+            current = current.prev;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        MovieManagementSystem list = new MovieManagementSystem();
+
+        while (true) {
+            System.out.println("\n1. Add at Beginning\n2. Add at End\n3. Add at Position\n" +
+                    "4. Remove by Title\n5. Search by Director/Rating\n6. Update Rating\n" +
+                    "7. Display Forward\n8. Display Reverse\n9. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Title: ");
+                    String title = scanner.nextLine();
+                    System.out.print("Enter Director: ");
+                    String director = scanner.nextLine();
+                    System.out.print("Enter Year: ");
+                    int year = scanner.nextInt();
+                    System.out.print("Enter Rating: ");
+                    double rating = scanner.nextDouble();
+                    list.addAtBeginning(title, director, year, rating);
+                    break;
+                case 2:
+                    System.out.print("Enter Title: ");
+                    title = scanner.nextLine();
+                    System.out.print("Enter Director: ");
+                    director = scanner.nextLine();
+                    System.out.print("Enter Year: ");
+                    year = scanner.nextInt();
+                    System.out.print("Enter Rating: ");
+                    rating = scanner.nextDouble();
+                    list.addAtEnd(title, director, year, rating);
+                    break;
+                case 3:
+                    System.out.print("Enter Title: ");
+                    title = scanner.nextLine();
+                    System.out.print("Enter Director: ");
+                    director = scanner.nextLine();
+                    System.out.print("Enter Year: ");
+                    year = scanner.nextInt();
+                    System.out.print("Enter Rating: ");
+                    rating = scanner.nextDouble();
+                    System.out.print("Enter Position: ");
+                    int pos = scanner.nextInt();
+                    list.addAtPosition(title, director, year, rating, pos);
+                    break;
+                case 4:
+                    System.out.print("Enter Title: ");
+                    title = scanner.nextLine();
+                    list.removeByTitle(title);
+                    break;
+                case 5:
+                    System.out.print("Enter Director: ");
+                    director = scanner.nextLine();
+                    System.out.print("Enter Rating: ");
+                    rating = scanner.nextDouble();
+                    list.searchByDirectorOrRating(director, rating);
+                    break;
+                case 6:
+                    System.out.print("Enter Title: ");
+                    title = scanner.nextLine();
+                    System.out.print("Enter New Rating: ");
+                    rating = scanner.nextDouble();
+                    list.updateRating(title, rating);
+                    break;
+                case 7:
+                    list.displayForward();
+                    break;
+                case 8:
+                    list.displayReverse();
+                    break;
+                case 9:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}
+
+</xaiArtifactixSystem>
+
+---
+
+### 3. Circular Linked List: Task Scheduler
+
+<xaiArtifact artifact_id="w5x6y8z0b1-c4d2-5-f6-g7-h8i9j0k2l3n" artifact_version_id="x6y7z9a1c2-d3-e5-g6-h8i-j7-k9l0m2n4p" artifact_type="text/x-java" title="TaskScheduler.java" contentType="text/x-java">
+
+import java.util.Scanner;
+
+/**
+ * Circular Linked List for Task Scheduler.
+ * Implements add, remove, view, display, and search by priority operations.
+ * Follows LinkedList best practices: tail management, avoid infinite loops, modular code (#7).
+ * Guideline #11: Documented behavior.
+ */
+public class TaskScheduler {
+    static class Node {
+        int taskId;
+        String name;
+        int priority;
+        String dueDate;
+        Node next;
+
+        Node(int taskId, String name, int priority, String date) {
+            this.taskId = id;
+            this.name = name;
+            this.priority = priority;
+            this.dueDate = date;
+            this.next = null;
+        }
+    }
+
+    private Node last;
+
+    public TaskScheduler() {
+        this.last = null;
+    }
+
+    // Add at beginning: O(1)
+    public void addAtBeginning(int taskId, String name, int priority, String date) {
+        Node newNode = new Node(taskId, name, priority, date);
+        if (last == null) {
+            last = newNode;
+            newNode.next = last;
+            return;
+        }
+        newNode.next = last.next;
+        last.next = newNode;
+    }
+
+    // Add at end: O(1)
+    public void addAtEnd(int taskId, String name, int priority, String date) {
+        Node newNode = new Node(taskId, name, priority, date);
+        if (last == null) {
+            last = newNode;
+            newNode.next = last;
+            return;
+        }
+        newNode.next = last.next;
+        last.next = newNode;
+        last = newNode;
+    }
+
+    // Add at position: O(n)
+    public void addAtPosition(int taskId, String name, int priority, String date, int position) {
+        if (position < 1) {
+            System.out.println("Invalid position");
+            return;
+        }
+        if (position == 1) {
+            addAtBeginning(taskId, name, priority, date);
+            return;
+        }
+        Node newNode = new Node(taskId, name, priority, date);
+        Node current = last.next;
+        for (int i = 1; i < position - 1 && current != last; i++) {
+            current = current.next;
+        }
+        if (current == last && position > 2) {
+            System.out.println("Position out of bounds");
+            return;
+        }
+        newNode.next = current.next;
+        current.next = newNode;
+        if (current == last) {
+            last = newNode;
+        }
+    }
+
+    // Remove by task ID: O(n)
+    public void removeByTaskId(int taskId) {
+        if (last == null) {
+            System.out.println("List is empty");
+            return;
+        }
+        Node current = last.next;
+        Node prev = last;
+        do {
+            if (current.taskId == taskId) {
+                if (current == last && current.next == last) {
+                    last = null;
+                    return;
+                }
+                prev.next = current.next;
+                if (current == last) {
+                    last = prev;
+                }
+                current.next = null; // Memory management
+                return;
+            }
+            prev = current;
+            current = current.next;
+        } while (current != last.next);
+        System.out.println("Task ID not found");
+    }
+
+    // View current and move to next: O(1)
+    public void viewCurrentAndMoveNext() {
+        if (last == null) {
+            System.out.println("No tasks available");
+            return;
+        }
+        Node current = last.next;
+        System.out.printf("Current Task: ID: %d, Name: %s, Priority: %d, Due: %s\n",
+                current.taskId, current.name, current.priority, current.dueDate);
+        last = current;
+    }
+
+    // Display all tasks: O(n)
+    public void displayTasks() {
+        if (last == null) {
+            System.out.println("No tasks to display");
+            return;
+        }
+        Node current = last.next;
+        System.out.println("Tasks:");
+        do {
+            System.out.printf("ID: %d, Name: %s, Priority: %d, Due: %s\n",
+                    current.taskId, current.name, current.priority, current.dueDate);
+            current = current.next;
+        } while (current != last.next);
+    }
+
+    // Search by priority: O(n)
+    public void searchByPriority(int priority) {
+        if (last == null) {
+            System.out.println("No tasks to search");
+            return;
+        }
+        Node current = last.next;
+        boolean found = false;
+        do {
+            if (current.priority == priority) {
+                System.out.printf("Found: ID: %d, Name: %s, Priority: %d, Due: %s\n",
+                        current.taskId, current.name, current.priority, current.dueDate);
+                found = true;
+            }
+            current = current.next;
+        } while (current != last.next);
+        if (!found) {
+            System.out.println("No tasks with priority " + priority);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        TaskScheduler list = new TaskScheduler();
+
+        while (true) {
+            System.out.println("\n1. Add at Beginning\n2. Add at End\n3. Add at Position\n" +
+                    "4. Remove by Task ID\n5. View Current & Next\n6. Display Tasks\n" +
+                    "7. Search by Priority\n8. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Task ID: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Task Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Priority: ");
+                    int priority = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Due Date: ");
+                    String date = scanner.nextLine();
+                    list.addAtBeginning(id, name, priority, date);
+                    break;
+                case 2:
+                    System.out.print("Enter Task ID: ");
+                    id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Task Name: ");
+                    name = scanner.nextLine();
+                    System.out.print("Enter Priority: ");
+                    priority = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Due Date: ");
+                    date = scanner.nextLine();
+                    list.addAtEnd(id, name, priority, date);
+                    break;
+                case 3:
+                    System.out.print("Enter Task ID: ");
+                    id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Task Name: ");
+                    name = scanner.nextLine();
+                    System.out.print("Enter Priority: ");
+                    priority = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Due Date: ");
+                    date = scanner.nextLine();
+                    System.out.print("Enter Position: ");
+                    int pos = scanner.nextInt();
+                    list.addAtPosition(id, name, priority, date, pos);
+                    break;
+                case 4:
+                    System.out.print("Enter Task ID: ");
+                    id = scanner.nextInt();
+                    list.removeByTaskId(id);
+                    break;
+                case 5:
+                    list.viewCurrentAndMoveNext();
+                    break;
+                case 6:
+                    list.displayTasks();
+                    break;
+                case 7:
+                    System.out.print("Enter Priority: ");
+                    priority = scanner.nextInt();
+                    list.searchByPriority(priority);
+                    break;
+                case 8:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}

@@ -1,0 +1,292 @@
+import java.util.Scanner;
+
+/**
+ * Singly Linked List for Inventory Management System.
+ * Implements add, remove, update, search, total value, and sort operations.
+ * Adapts cab service methods: calculateFare (calculateTotalValue), enhanceInvoice (displayItems).
+ * Follows LinkedList best practices: null checks, efficient insertion, memory management.
+ * Guideline #14: Polymorphism (for sorting flexibility).
+ */
+public class InventoryManagementSystem {
+    static class Node {
+        String itemName;
+        int itemId;
+        int quantity;
+        double price;
+        Node next;
+
+        Node(String itemName, int itemId, int quantity, double price) {
+            this.itemName = itemName;
+            this.itemId = itemId;
+            this.quantity = quantity;
+            this.price = price;
+            this.next = null;
+        }
+    }
+
+    private Node head;
+
+    public InventoryManagementSystem() {
+        this.head = null;
+    }
+
+    // Add at beginning: O(1)
+    public void addAtBeginning(String itemName, int itemId, int quantity, double price) {
+        Node newNode = new Node(itemName, itemId, quantity, price);
+        newNode.next = head;
+        head = newNode;
+    }
+
+    // Add at end: O(n)
+    public void addAtEnd(String itemName, int itemId, int quantity, double price) {
+        Node newNode = new Node(itemName, itemId, quantity, price);
+        if (head == null) {
+            head = newNode;
+            return;
+        }
+        Node current = head;
+        while (current.next != null) {
+            current = current.next;
+        }
+        current.next = newNode;
+    }
+
+    // Add at position: O(n)
+    public void addAtPosition(String itemName, int itemId, int quantity, double price, int position) {
+        if (position < 1) {
+            System.out.println("Invalid position");
+            return;
+        }
+        if (position == 1) {
+            addAtBeginning(itemName, itemId, quantity, price);
+            return;
+        }
+        Node newNode = new Node(itemName, itemId, quantity, price);
+        Node current = head;
+        for (int i = 1; i < position - 1 && current != null; i++) {
+            current = current.next;
+        }
+        if (current == null) {
+            System.out.println("Position out of bounds");
+            return;
+        }
+        newNode.next = current.next;
+        current.next = newNode;
+    }
+
+    // Remove by item ID: O(n)
+    public void removeByItemId(int itemId) {
+        if (head == null) {
+            System.out.println("Inventory is empty");
+            return;
+        }
+        if (head.itemId == itemId) {
+            head = head.next;
+            return;
+        }
+        Node current = head;
+        while (current.next != null && current.next.itemId != itemId) {
+            current = current.next;
+        }
+        if (current.next == null) {
+            System.out.println("Item ID not found");
+            return;
+        }
+        current.next = current.next.next;
+    }
+
+    // Update quantity by item ID: O(n)
+    public void updateQuantity(int itemId, int newQuantity) {
+        Node current = head;
+        while (current != null) {
+            if (current.itemId == itemId) {
+                current.quantity = newQuantity;
+                System.out.println("Quantity updated for Item ID " + itemId);
+                return;
+            }
+            current = current.next;
+        }
+        System.out.println("Item ID not found");
+    }
+
+    // Search by item ID or name: O(n)
+    public void searchByIdOrName(int itemId, String itemName) {
+        Node current = head;
+        boolean found = false;
+        while (current != null) {
+            if (current.itemId == itemId || current.itemName.equalsIgnoreCase(itemName)) {
+                System.out.printf("Found: Name: %s, ID: %d, Quantity: %d, Price: $%.2f\n",
+                        current.itemName, current.itemId, current.quantity, current.price);
+                found = true;
+            }
+            current = current.next;
+        }
+        if (!found) {
+            System.out.println("No matching items found");
+        }
+    }
+
+    // Calculate total value: O(n)
+    public double calculateTotalValue() {
+        double total = 0.0;
+        Node current = head;
+        while (current != null) {
+            total += current.quantity * current.price;
+            current = current.next;
+        }
+        return total;
+    }
+
+    // Sort by name or price: O(n^2) using bubble sort for simplicity
+    public void sortBy(String criterion, boolean ascending) {
+        if (head == null || head.next == null) {
+            return;
+        }
+        Node current;
+        Node nextNode;
+        boolean swapped;
+        do {
+            swapped = false;
+            current = head;
+            while (current.next != null) {
+                nextNode = current.next;
+                boolean swap = false;
+                if (criterion.equalsIgnoreCase("name")) {
+                    int compare = ascending ? 
+                        current.itemName.compareToIgnoreCase(nextNode.itemName) :
+                        nextNode.itemName.compareToIgnoreCase(current.itemName);
+                    swap = compare > 0;
+                } else if (criterion.equalsIgnoreCase("price")) {
+                    swap = ascending ? 
+                        current.price > nextNode.price : 
+                        current.price < nextNode.price;
+                }
+                if (swap) {
+                    // Swap data
+                    String tempName = current.itemName;
+                    int tempId = current.itemId;
+                    int tempQuantity = current.quantity;
+                    double tempPrice = current.price;
+                    current.itemName = nextNode.itemName;
+                    current.itemId = nextNode.itemId;
+                    current.quantity = nextNode.quantity;
+                    current.price = nextNode.price;
+                    nextNode.itemName = tempName;
+                    nextNode.itemId = tempId;
+                    nextNode.quantity = tempQuantity;
+                    nextNode.price = tempPrice;
+                    swapped = true;
+                }
+                current = current.next;
+            }
+        } while (swapped);
+    }
+
+    // Display items: O(n)
+    public void displayItems() {
+        if (head == null) {
+            System.out.println("Inventory is empty");
+            return;
+        }
+        Node current = head;
+        System.out.println("Inventory Items:");
+        System.out.printf("%-15s %-10s %-10s %-10s\n", "Name", "ID", "Quantity", "Price");
+        System.out.println("----------------------------------------");
+        while (current != null) {
+            System.out.printf("%-15s %-10d %-10d $%-9.2f\n",
+                    current.itemName, current.itemId, current.quantity, current.price);
+            current = current.next;
+        }
+        System.out.println("Total Value: $" + String.format("%.2f", calculateTotalValue()));
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        InventoryManagementSystem list = new InventoryManagementSystem();
+
+        while (true) {
+            System.out.println("\n1. Add at Beginning\n2. Add at End\n3. Add at Position\n" +
+                    "4. Remove by Item ID\n5. Update Quantity\n6. Search by ID/Name\n" +
+                    "7. Display Items\n8. Sort by Name\n9. Sort by Price\n10. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Item Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Item ID: ");
+                    int id = scanner.nextInt();
+                    System.out.print("Enter Quantity: ");
+                    int quantity = scanner.nextInt();
+                    System.out.print("Enter Price: ");
+                    double price = scanner.nextDouble();
+                    list.addAtBeginning(name, id, quantity, price);
+                    break;
+                case 2:
+                    System.out.print("Enter Item Name: ");
+                    name = scanner.nextLine();
+                    System.out.print("Enter Item ID: ");
+                    id = scanner.nextInt();
+                    System.out.print("Enter Quantity: ");
+                    quantity = scanner.nextInt();
+                    System.out.print("Enter Price: ");
+                    price = scanner.nextDouble();
+                    list.addAtEnd(name, id, quantity, price);
+                    break;
+                case 3:
+                    System.out.print("Enter Item Name: ");
+                    name = scanner.nextLine();
+                    System.out.print("Enter Item ID: ");
+                    id = scanner.nextInt();
+                    System.out.print("Enter Quantity: ");
+                    quantity = scanner.nextInt();
+                    System.out.print("Enter Price: ");
+                    price = scanner.nextDouble();
+                    System.out.print("Enter Position: ");
+                    int pos = scanner.nextInt();
+                    list.addAtPosition(name, id, quantity, price, pos);
+                    break;
+                case 4:
+                    System.out.print("Enter Item ID: ");
+                    id = scanner.nextInt();
+                    list.removeByItemId(id);
+                    break;
+                case 5:
+                    System.out.print("Enter Item ID: ");
+                    id = scanner.nextInt();
+                    System.out.print("Enter New Quantity: ");
+                    quantity = scanner.nextInt();
+                    list.updateQuantity(id, quantity);
+                    break;
+                case 6:
+                    System.out.print("Enter Item ID: ");
+                    id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Item Name: ");
+                    name = scanner.nextLine();
+                    list.searchByIdOrName(id, name);
+                    break;
+                case 7:
+                    list.displayItems();
+                    break;
+                case 8:
+                    System.out.print("Ascending? (true/false): ");
+                    boolean ascending = scanner.nextBoolean();
+                    list.sortBy("name", ascending);
+                    break;
+                case 9:
+                    System.out.print("Ascending? (true/false): ");
+                    ascending = scanner.nextBoolean();
+                    list.sortBy("price", ascending);
+                    break;
+                case 10:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}
