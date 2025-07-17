@@ -1,0 +1,58 @@
+import java.util.Scanner;
+
+/**
+ * Implements Selection Sort to sort exam scores in ascending order.
+ * Follows best practices: modular code, input validation.
+ * Adapts cab service method: enhanceInvoice (displaySortedScores).
+ */
+public class SelectionSortExamScores {
+    // Selection Sort: O(n^2)
+    public void selectionSort(int[] scores) {
+        int n = scores.length;
+        for (int i = 0; i < n - 1; i++) {
+            int minIdx = i;
+            for (int j = i + 1; j < n; j++) {
+                if (scores[j] < scores[minIdx]) {
+                    minIdx = j;
+                }
+            }
+            int temp = scores[minIdx];
+            scores[minIdx] = scores[i];
+            scores[i] = temp;
+        }
+    }
+
+    // Display sorted scores: O(n)
+    public String enhanceInvoice(int[] scores) {
+        StringBuilder sb = new StringBuilder("Sorted Exam Scores:\n");
+        sb.append("----------------\n");
+        for (int i = 0; i < scores.length; i++) {
+            sb.append(String.format("Student %d: %d\n", i + 1, scores[i]));
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        SelectionSortExamScores sorter = new SelectionSortExamScores();
+
+        System.out.print("Enter number of students: ");
+        int n = scanner.nextInt();
+        if (n <= 0) {
+            System.out.println("Invalid input size");
+            scanner.close();
+            return;
+        }
+        int[] scores = new int[n];
+        System.out.println("Enter exam scores:");
+        for (int i = 0; i < n; i++) {
+            scores[i] = scanner.nextInt();
+        }
+
+        sorter.selectionSort(scores);
+        System.out.println(sorter.enhanceInvoice(scores));
+
+        scanner.close();
+    }
+}

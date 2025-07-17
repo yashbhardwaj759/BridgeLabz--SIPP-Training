@@ -1,0 +1,74 @@
+import java.util.Scanner;
+
+/**
+ * Implements Counting Sort to sort student ages (range 10 to 18) in ascending order.
+ * Follows best practices: modular code, efficient memory usage for count array.
+ * Adapts cab service method: invoiceService (displaySortedAges).
+ */
+public class CountingSortStudentAges {
+    // Counting Sort: O(n + k) where k is range (18 - 10 + 1 = 9)
+    public void countingSort(int[] ages, int min, int max) {
+        int range = max - min + 1;
+        int[] count = new int[range];
+        int[] output = new int[ages.length];
+
+        // Count frequencies
+        for (int age : ages) {
+            count[age - min]++;
+        }
+        // Compute cumulative frequencies
+        for (int i = 1; i < range; i++) {
+            count[i] += count[i - 1];
+        }
+        // Place elements in sorted order
+        for (int i = ages.length - 1; i >= 0; i--) {
+            output[count[ages[i] - min] - 1] = ages[i];
+            count[ages[i] - min]--;
+        }
+        // Copy to original array
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = output[i];
+        }
+    }
+
+    // Display sorted ages: O(n)
+    public String invoiceService(int[] ages) {
+        StringBuilder sb = new StringBuilder("Sorted Student Ages: ");
+        for (int i = 0; i < ages.length; i++) {
+            sb.append(ages[i]);
+            if (i < ages.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CountingSortStudentAges sorter = new CountingSortStudentAges();
+
+        System.out.print("Enter number of students: ");
+        int n = scanner.nextInt();
+        if (n <= 0) {
+            System.out.println("Invalid input size");
+            scanner.close();
+            return;
+        }
+        int[] ages = new int[n];
+        System.out.println("Enter student ages (10 to 18):");
+        for (int i = 0; i < n; i++) {
+            int age = scanner.nextInt();
+            if (age < 10 || age > 18) {
+                System.out.println("Age must be between 10 and 18");
+                scanner.close();
+                return;
+            }
+            ages[i] = age;
+        }
+
+        sorter.countingSort(ages, 10, 18);
+        System.out.println(sorter.invoiceService(ages));
+
+        scanner.close();
+    }
+}

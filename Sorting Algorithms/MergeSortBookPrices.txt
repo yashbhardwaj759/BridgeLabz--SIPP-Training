@@ -1,0 +1,82 @@
+import java.util.Scanner;
+
+/**
+ * Implements Merge Sort to sort book prices in ascending order.
+ * Follows best practices: modular code, efficient memory usage.
+ * Adapts cab service method: enhanceInvoice (displaySortedPrices).
+ */
+public class MergeSortBookPrices {
+    // Merge Sort: O(n log n)
+    public void mergeSort(int[] prices, int left, int right) {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+            mergeSort(prices, left, mid);
+            mergeSort(prices, mid + 1, right);
+            merge(prices, left, mid, right);
+        }
+    }
+
+    // Merge two sorted subarrays: O(n)
+    private void merge(int[] prices, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+        int[] leftArray = new int[n1];
+        int[] rightArray = new int[n2];
+
+        for (int i = 0; i < n1; i++) {
+            leftArray[i] = prices[left + i];
+        }
+        for (int j = 0; j < n2; j++) {
+            rightArray[j] = prices[mid + 1 + j];
+        }
+
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (leftArray[i] <= rightArray[j]) {
+                prices[k++] = leftArray[i++];
+            } else {
+                prices[k++] = rightArray[j++];
+            }
+        }
+        while (i < n1) {
+            prices[k++] = leftArray[i++];
+        }
+        while (j < n2) {
+            prices[k++] = rightArray[j++];
+        }
+    }
+
+    // Display sorted prices: O(n)
+    public String enhanceInvoice(int[] prices) {
+        StringBuilder sb = new StringBuilder("Sorted Book Prices:\n");
+        sb.append("----------------\n");
+        for (int i = 0; i < prices.length; i++) {
+            sb.append(String.format("Book %d: $%d\n", i + 1, prices[i]));
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        MergeSortBookPrices sorter = new MergeSortBookPrices();
+
+        System.out.print("Enter number of books: ");
+        int n = scanner.nextInt();
+        if (n <= 0) {
+            System.out.println("Invalid input size");
+            scanner.close();
+            return;
+        }
+        int[] prices = new int[n];
+        System.out.println("Enter book prices:");
+        for (int i = 0; i < n; i++) {
+            prices[i] = scanner.nextInt();
+        }
+
+        sorter.mergeSort(prices, 0, n - 1);
+        System.out.println(sorter.enhanceInvoice(prices));
+
+        scanner.close();
+    }
+}

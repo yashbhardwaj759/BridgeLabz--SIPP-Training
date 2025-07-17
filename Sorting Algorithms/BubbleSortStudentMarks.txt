@@ -1,0 +1,63 @@
+import java.util.Scanner;
+
+/**
+ * Implements Bubble Sort to sort student marks in ascending order.
+ * Follows best practices: modular code, input validation.
+ * Adapts cab service method: enhanceInvoice (displaySortedMarks).
+ */
+public class BubbleSortStudentMarks {
+    // Bubble Sort: O(n^2)
+    public void bubbleSort(int[] marks) {
+        int n = marks.length;
+        boolean swapped;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+                if (marks[j] > marks[j + 1]) {
+                    // Swap adjacent elements
+                    int temp = marks[j];
+                    marks[j] = marks[j + 1];
+                    marks[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            if (!swapped) {
+                break; // Optimization: stop if no swaps
+            }
+        }
+    }
+
+    // Display sorted marks: O(n)
+    public String enhanceInvoice(int[] marks) {
+        StringBuilder sb = new StringBuilder("Sorted Student Marks:\n");
+        sb.append("----------------\n");
+        for (int i = 0; i < marks.length; i++) {
+            sb.append(String.format("Student %d: %d\n", i + 1, marks[i]));
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        BubbleSortStudentMarks sorter = new BubbleSortStudentMarks();
+
+        System.out.print("Enter number of students: ");
+        int n = scanner.nextInt();
+        if (n <= 0) {
+            System.out.println("Invalid input size");
+            scanner.close();
+            return;
+        }
+        int[] marks = new int[n];
+        System.out.println("Enter student marks:");
+        for (int i = 0; i < n; i++) {
+            marks[i] = scanner.nextInt();
+        }
+
+        sorter.bubbleSort(marks);
+        System.out.println(sorter.enhanceInvoice(marks));
+
+        scanner.close();
+    }
+}

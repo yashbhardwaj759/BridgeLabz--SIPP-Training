@@ -1,0 +1,78 @@
+import java.util.Scanner;
+
+/**
+ * Implements Heap Sort to sort job applicants' salary demands in ascending order.
+ * Follows best practices: modular code, efficient heap operations.
+ * Adapts cab service method: enhanceInvoice (displaySortedSalaries).
+ */
+public class HeapSortSalaries {
+    // Heap Sort: O(n log n)
+    public void heapSort(int[] salaries) {
+        int n = salaries.length;
+        // Build max heap
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(salaries, n, i);
+        }
+        // Extract elements from heap
+        for (int i = n - 1; i > 0; i--) {
+            int temp = salaries[0];
+            salaries[0] = salaries[i];
+            salaries[i] = temp;
+            heapify(salaries, i, 0);
+        }
+    }
+
+    // Heapify subtree: O(log n)
+    private void heapify(int[] salaries, int n, int i) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        if (left < n && salaries[left] > salaries[largest]) {
+            largest = left;
+        }
+        if (right < n && salaries[right] > salaries[largest]) {
+            largest = right;
+        }
+        if (largest != i) {
+            int temp = salaries[i];
+            salaries[i] = salaries[largest];
+            salaries[largest] = temp;
+            heapify(salaries, n, largest);
+        }
+    }
+
+    // Display sorted salaries: O(n)
+    public String enhanceInvoice(int[] salaries) {
+        StringBuilder sb = new StringBuilder("Sorted Salary Demands:\n");
+        sb.append("----------------\n");
+        for (int i = 0; i < salaries.length; i++) {
+            sb.append(String.format("Applicant %d: $%d\n", i + 1, salaries[i]));
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        HeapSortSalaries sorter = new HeapSortSalaries();
+
+        System.out.print("Enter number of applicants: ");
+        int n = scanner.nextInt();
+        if (n <= 0) {
+            System.out.println("Invalid input size");
+            scanner.close();
+            return;
+        }
+        int[] salaries = new int[n];
+        System.out.println("Enter salary demands:");
+        for (int i = 0; i < n; i++) {
+            salaries[i] = scanner.nextInt();
+        }
+
+        sorter.heapSort(salaries);
+        System.out.println(sorter.enhanceInvoice(salaries));
+
+        scanner.close();
+    }
+}

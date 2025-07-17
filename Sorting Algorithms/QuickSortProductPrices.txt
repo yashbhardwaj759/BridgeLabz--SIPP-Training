@@ -1,0 +1,70 @@
+import java.util.Scanner;
+
+/**
+ * Implements Quick Sort to sort product prices in ascending order.
+ * Follows best practices: modular code, efficient partitioning.
+ * Adapts cab service method: invoiceService (displaySortedPrices).
+ */
+public class QuickSortProductPrices {
+    // Quick Sort: O(n log n) average
+    public void quickSort(int[] prices, int low, int high) {
+        if (low < high) {
+            int pi = partition(prices, low, high);
+            quickSort(prices, low, pi - 1);
+            quickSort(prices, pi + 1, high);
+        }
+    }
+
+    // Partition array: O(n)
+    private int partition(int[] prices, int low, int high) {
+        int pivot = prices[high];
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            if (prices[j] <= pivot) {
+                i++;
+                int temp = prices[i];
+                prices[i] = prices[j];
+                prices[j] = temp;
+            }
+        }
+        int temp = prices[i + 1];
+        prices[i + 1] = prices[high];
+        prices[high] = temp;
+        return i + 1;
+    }
+
+    // Display sorted prices: O(n)
+    public String invoiceService(int[] prices) {
+        StringBuilder sb = new StringBuilder("Sorted Product Prices: ");
+        for (int i = 0; i < prices.length; i++) {
+            sb.append(prices[i]);
+            if (i < prices.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        QuickSortProductPrices sorter = new QuickSortProductPrices();
+
+        System.out.print("Enter number of products: ");
+        int n = scanner.nextInt();
+        if (n <= 0) {
+            System.out.println("Invalid input size");
+            scanner.close();
+            return;
+        }
+        int[] prices = new int[n];
+        System.out.println("Enter product prices:");
+        for (int i = 0; i < n; i++) {
+            prices[i] = scanner.nextInt();
+        }
+
+        sorter.quickSort(prices, 0, n - 1);
+        System.out.println(sorter.invoiceService(prices));
+
+        scanner.close();
+    }
+}

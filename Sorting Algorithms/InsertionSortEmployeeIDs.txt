@@ -1,0 +1,57 @@
+import java.util.Scanner;
+
+/**
+ * Implements Insertion Sort to sort employee IDs in ascending order.
+ * Follows best practices: modular code, input validation.
+ * Adapts cab service method: invoiceService (displaySortedIDs).
+ */
+public class InsertionSortEmployeeIDs {
+    // Insertion Sort: O(n^2)
+    public void insertionSort(int[] ids) {
+        int n = ids.length;
+        for (int i = 1; i < n; i++) {
+            int key = ids[i];
+            int j = i - 1;
+            while (j >= 0 && ids[j] > key) {
+                ids[j + 1] = ids[j];
+                j--;
+            }
+            ids[j + 1] = key;
+        }
+    }
+
+    // Display sorted IDs: O(n)
+    public String invoiceService(int[] ids) {
+        StringBuilder sb = new StringBuilder("Sorted Employee IDs: ");
+        for (int i = 0; i < ids.length; i++) {
+            sb.append(ids[i]);
+            if (i < ids.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        InsertionSortEmployeeIDs sorter = new InsertionSortEmployeeIDs();
+
+        System.out.print("Enter number of employees: ");
+        int n = scanner.nextInt();
+        if (n <= 0) {
+            System.out.println("Invalid input size");
+            scanner.close();
+            return;
+        }
+        int[] ids = new int[n];
+        System.out.println("Enter employee IDs:");
+        for (int i = 0; i < n; i++) {
+            ids[i] = scanner.nextInt();
+        }
+
+        sorter.insertionSort(ids);
+        System.out.println(sorter.invoiceService(ids));
+
+        scanner.close();
+    }
+}
