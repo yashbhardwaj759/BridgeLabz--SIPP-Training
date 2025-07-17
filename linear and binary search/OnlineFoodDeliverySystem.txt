@@ -1,0 +1,133 @@
+import java.util.Scanner;
+
+/**
+ * Online Food Delivery System with abstract FoodItem class and Discountable interface.
+ * Adapts cab service methods: calculateFare (calculateTotalPrice), enhanceInvoice (getDiscountDetails).
+ * Demonstrates encapsulation, polymorphism, and guideline #14 (polymorphism).
+ */
+public class OnlineFoodDeliverySystem {
+    /**
+     * Interface for discountable items.
+     */
+    interface Discountable {
+        double applyDiscount();
+        String getDiscountDetails();
+    }
+
+    /**
+     * Abstract FoodItem class with common fields and methods.
+     */
+    abstract static class FoodItem {
+        private String itemName;
+        private double price;
+        private int quantity;
+
+        public FoodItem(String itemName, double price, int quantity) {
+            this.itemName = itemName;
+            this.price = price;
+            this.quantity = quantity;
+        }
+
+        public abstract double calculateTotalPrice();
+
+        public String getItemDetails() {
+            return "Item: " + itemName + ", Price: $" + price + ", Quantity: " + quantity;
+        }
+
+        // Getters and setters
+        public String getItemName() { return itemName; }
+        public double getPrice() { return price; }
+        public int getQuantity() { return quantity; }
+        public void setQuantity(int quantity) { this.quantity = quantity; }
+    }
+
+    /**
+     * VegItem with specific pricing.
+     */
+    static class VegItem extends FoodItem implements Discountable {
+        public VegItem(String itemName, double price, int quantity) {
+            super(itemName, price, quantity);
+        }
+
+        @Override
+        public double calculateTotalPrice() {
+            return getPrice() * getQuantity();
+        }
+
+        @Override
+        public double applyDiscount() {
+            return calculateTotalPrice() * 0.1; // 10% discount
+        }
+
+        @Override
+        public String getDiscountDetails() {
+            return "Discount for " + getItemName() + ": $" + String.format("%.2f", applyDiscount());
+        }
+    }
+
+    /**
+     * NonVegItem with additional charge.
+     */
+    static class NonVegItem extends FoodItem implements Discountable {
+        private static final double NON_VEG_CHARGE = 2.0;
+
+        public NonVegItem(String itemName, double price, int quantity) {
+            super(itemName, price, quantity);
+        }
+
+        @Override
+        public double calculateTotalPrice() {
+            return (getPrice() + NON_VEG_CHARGE) * getQuantity();
+        }
+
+        @Override
+        public double applyDiscount() {
+            return calculateTotalPrice() * 0.05; // 5% discount
+        }
+
+        @Override
+        public String getDiscountDetails() {
+            return "Discount for " + getItemName() + ": $" + String.format("%.2f", applyDiscount());
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        FoodItem[] items = new FoodItem[10];
+        int itemCount = 0;
+
+        System.out.print("Enter number of food items: ");
+        int numItems = scanner.nextInt();
+        scanner.nextLine();
+
+        for (int i = 0; i < numItems; i++) {
+            System.out.print("Enter item name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter price: ");
+            double price = scanner.nextDouble();
+            System.out.print("Enter quantity: ");
+            int quantity = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Is non-veg? (true/false): ");
+            boolean isNonVeg = scanner.nextBoolean();
+            scanner.nextLine();
+
+            FoodItem item = isNonVeg ? new NonVegItem(name, price, quantity) : new VegItem(name, price, quantity);
+            items[itemCount++] = item;
+        }
+
+        // Polymorphic processing
+        for (int i = 0; i < itemCount; i++) {
+            FoodItem item = items[i];
+            double total = item.calculateTotalPrice();
+            double discount = (item instanceof Discountable) ? ((Discountable) item).applyDiscount() : 0.0;
+            System.out.println(item.getItemDetails());
+            System.out.println("Total Price: $" + String.format("%.2f", total));
+            if (item instanceof Discountable) {
+                System.out.println(((Discountable) item).getDiscountDetails());
+            }
+        }
+
+        scanner.close();
+    }
+}

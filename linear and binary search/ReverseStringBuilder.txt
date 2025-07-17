@@ -1,0 +1,34 @@
+import java.util.Scanner;
+
+/**
+ * Reverses a string using StringBuilder.
+ * Follows StringBuilder best practices: use append(), initialize with capacity.
+ * Adapts cab service method: invoiceService (displayReversed).
+ */
+public class ReverseStringBuilder {
+    // Reverse string: O(n)
+    public String reverseString(String input) {
+        if (input == null) return "";
+        StringBuilder sb = new StringBuilder(input.length());
+        sb.append(input);
+        return sb.reverse().toString();
+    }
+
+    // Display result: O(1)
+    public String invoiceService(String original, String reversed) {
+        return String.format("Original: %s\nReversed: %s", original, reversed);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ReverseStringBuilder reverser = new ReverseStringBuilder();
+
+        System.out.print("Enter a string to reverse: ");
+        String input = scanner.nextLine();
+
+        String reversed = reverser.reverseString(input);
+        System.out.println(reverser.invoiceService(input, reversed));
+
+        scanner.close();
+    }
+}
