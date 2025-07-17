@@ -1,0 +1,142 @@
+import java.util.Scanner;
+
+/**
+ * Banking System with abstract BankAccount class and Loanable interface.
+ * Adapts cab service methods: calculateFare (calculateInterest), enhanceInvoice (getLoanDetails).
+ * Demonstrates encapsulation, polymorphism, and guideline #7 (private fields).
+ */
+public class BankingSystem {
+    /**
+     * Interface for loanable accounts.
+     */
+    interface Loanable {
+        void applyForLoan(double amount);
+        String calculateLoanEligibility();
+    }
+
+    /**
+     * Abstract BankAccount class with common fields and methods.
+     */
+    abstract static class BankAccount {
+        private String accountNumber;
+        private String holderName;
+        private double balance;
+
+        public BankAccount(String accountNumber, String holderName, double balance) {
+            this.accountNumber = accountNumber;
+            this.holderName = holderName;
+            this.balance = balance;
+        }
+
+        public void deposit(double amount) {
+            if (amount > 0) {
+                balance += amount;
+            }
+        }
+
+        public void withdraw(double amount) {
+            if (amount > 0 && balance >= amount) {
+                balance -= amount;
+            }
+        }
+
+        public abstract double calculateInterest();
+
+        // Getters and setters
+        public String getAccountNumber() { return accountNumber; }
+        public String getHolderName() { return holderName; }
+        public double getBalance() { return balance; }
+    }
+
+    /**
+     * SavingsAccount with specific interest calculation.
+     */
+    static class SavingsAccount extends BankAccount implements Loanable {
+        private double loanAmount;
+
+        public SavingsAccount(String accountNumber, String holderName, double balance) {
+            super(accountNumber, holderName, balance);
+            this.loanAmount = 0.0;
+        }
+
+        @Override
+        public double calculateInterest() {
+            return getBalance() * 0.04; // 4% interest
+        }
+
+        @Override
+        public void applyForLoan(double amount) {
+            this.loanAmount = amount;
+        }
+
+        @Override
+        public String calculateLoanEligibility() {
+            return "Loan for " + getHolderName() + ": $" + String.format("%.2f", loanAmount) +
+                   ", Eligible: " + (getBalance() > loanAmount * 2 ? "Yes" : "No");
+        }
+    }
+
+    /**
+     * CurrentAccount with specific interest calculation.
+     */
+    static class CurrentAccount extends BankAccount {
+        public CurrentAccount(String accountNumber, String holderName, double balance) {
+            super(accountNumber, name, balance);
+        }
+
+        @Override
+        public double calculateInterest() {
+            return getBalance() * 0.01; // 1% interest
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        BankAccount[] accounts = new BankAccount[10];
+        int accountCount = 0;
+
+        System.out.print("Enter number of accounts: ");
+        int numAccounts = scanner.nextInt();
+        scanner.nextLine();
+
+        for (int i = 0; i < numAccounts; i++) {
+            System.out.print("Enter account number: ");
+            String number = scanner.nextLine();
+            System.out.print("Enter holder name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter balance: ");
+            double balance = scanner.nextDouble();
+            scanner.nextLine();
+            System.out.print("Is savings account? (true/false): ");
+            boolean isSavings = scanner.nextBoolean();
+            scanner.nextLine();
+
+            BankAccount account;
+            if (isSavings) {
+                account = new SavingsAccount(number, name, balance);
+                System.out.print("Apply for loan? (true/false): ");
+                if (scanner.nextBoolean()) {
+                    System.out.print("Enter loan amount: ");
+                    double loan = scanner.nextDouble();
+                    ((SavingsAccount) account).applyForLoan(loan);
+                }
+                scanner.nextLine();
+            } else {
+                account = new CurrentAccount(number, name, balance);
+            }
+            accounts[accountCount++] = account;
+        }
+
+        // Polymorphic processing
+        for (int i = 0; i < accountCount; i++) {
+            BankAccount acc = accounts[i];
+            System.out.println("Account: " + acc.getHolderName() + ", Balance: $" + String.format("%.2f", acc.getBalance()));
+            System.out.println("Interest: $" + String.format("%.2f", acc.calculateInterest()));
+            if (acc instanceof Loanable) {
+                System.out.println(((Loanable) acc).calculateLoanEligibility());
+            }
+        }
+
+        scanner.close();
+    }
+}

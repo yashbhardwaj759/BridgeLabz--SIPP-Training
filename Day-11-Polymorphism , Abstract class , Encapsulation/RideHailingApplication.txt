@@ -1,0 +1,162 @@
+import java.util.Scanner;
+
+/**
+ * Ride-Hailing Application with abstract Vehicle class and GPS interface.
+ * Directly implements cab service methods: calculateFare, multipleRides, enhanceInvoice, invoiceService, premiumRides, bonus.
+ * Demonstrates encapsulation, polymorphism, and guideline #14 (polymorphism).
+ */
+public class RideHailingApplication {
+    /**
+     * Interface for GPS-enabled vehicles.
+     */
+    interface GPS {
+        String getCurrentLocation();
+        void updateLocation(String location);
+    }
+
+    /**
+     * Abstract Vehicle class with common fields and methods.
+     */
+    abstract static class Vehicle {
+        private String vehicleId;
+        private String driverName;
+        private double ratePerKm;
+        private String location;
+        private static final double BONUS_THRESHOLD = 3;
+        private static final double BONUS_DISCOUNT = 0.1;
+
+        public Vehicle(String vehicleId, String driverName, double ratePerKm) {
+            this.vehicleId = vehicleId;
+            this.driverName = driverName;
+            this.ratePerKm = ratePerKm;
+            this.location = "Unknown";
+        }
+
+        public abstract double calculateFare(double distance);
+
+        public String getVehicleDetails() {
+            return "ID: " + vehicleId + ", Driver: " + driverName + ", Rate: $" + ratePerKm + "/km";
+        }
+
+        public String enhanceInvoice(double[] distances, boolean isPremium) {
+            StringBuilder sb = new StringBuilder("Invoice for " + driverName + "\n");
+            sb.append("----------------------------------------\n");
+            sb.append(String.format("%-10s %-10s\n", "Ride", "Fare"));
+            sb.append("----------------------------------------\n");
+            double total = 0.0;
+            for (int i = 0; i < distances.length; i++) {
+                double fare = calculateFare(distances[i]);
+                sb.append(String.format("%-10d $%-9.2f\n", i + 1, fare));
+                total += fare;
+            }
+            total = isPremium ? total * 1.2 : total; // Premium ride multiplier
+            double finalTotal = distances.length >= BONUS_THRESHOLD ? total * (1 - BONUS_DISCOUNT) : total;
+            sb.append("----------------------------------------\n");
+            sb.append("Subtotal: $").append(String.format("%.2f", total)).append("\n");
+            sb.append("After Bonus: $").append(String.format("%.2f", finalTotal)).append("\n");
+            return sb.toString();
+        }
+
+        public String invoiceService(double[] distances, boolean isPremium) {
+            double total = 0.0;
+            for (double distance : distances) {
+                total += calculateFare(distance);
+            }
+            total = isPremium ? total * 1.2 : total;
+            double finalTotal = distances.length >= BONUS_THRESHOLD ? total * (1 - BONUS_DISCOUNT) : total;
+            return "Final Invoice for " + driverName + "\nTotal Rides: " + distances.length +
+                   "\nTotal: $" + String.format("%.2f", total) +
+                   "\nFinal Amount: $" + String.format("%.2f", finalTotal);
+        }
+
+        // Getters and setters
+        public String getVehicleId() { return vehicleId; }
+        public String getDriverName() { return driverName; }
+        public double getRatePerKm() { return ratePerKm; }
+        public String getLocation() { return location; }
+        public void setLocation(String location) { this.location = location; }
+    }
+
+    /**
+     * Car with specific fare calculation.
+     */
+    static class Car extends Vehicle implements GPS {
+        public Car(String vehicleId, String driverName, double ratePerKm) {
+            super(vehicleId, driverName, ratePerKm);
+        }
+
+        @Override
+        public double calculateFare(double distance) {
+            return getRatePerKm() * distance;
+        }
+
+        @Override
+        public String getCurrentLocation() {
+            return "Car Location: " + getLocation();
+        }
+
+        @Override
+        public void updateLocation(String location) {
+            setLocation(location);
+        }
+    }
+
+    /**
+     * Bike with specific fare calculation.
+     */
+    static class Bike extends Vehicle implements GPS {
+        public Bike(String vehicleId, String driverName, double ratePerKm) {
+            super(vehicleId, driverName, ratePerKm);
+        }
+
+        @Override
+        public double calculateFare(double distance) {
+            return getRatePerKm() * distance * 0.8; // 20% cheaper
+        }
+
+        @Override
+        public String getCurrentLocation() {
+            return "Bike Location: " + getLocation();
+        }
+
+        @Override
+        public void updateLocation(String location) {
+            setLocation(location);
+        }
+    }
+
+    /**
+     * Auto with specific fare calculation.
+     */
+    static class Auto extends Vehicle implements GPS {
+        public Auto(String vehicleId, String driverName, double ratePerKm) {
+            super(vehicleId, driverName, ratePerKm);
+        }
+
+        @Override
+        public double calculateFare(double distance) {
+            return getRatePerKm() * distance * 0.9; // 10% cheaper
+        }
+
+        @Override
+        public String getCurrentLocation() {
+            return "Auto Location: " + getLocation();
+        }
+
+        @Override
+        public void updateLocation(String location) {
+            setLocation(location);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Vehicle[] vehicles = new Vehicle[10];
+        int vehicleCount = 0;
+
+        System.out.print("Enter number of vehicles: ");
+        int numVehicles = scanner.nextInt();
+        scanner.nextLine();
+
+        for (int i = 0; i < numVehicles; i++) {
+            System.out.print("Enter vehicle ID: ");

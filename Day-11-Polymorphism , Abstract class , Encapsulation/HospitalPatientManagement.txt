@@ -1,0 +1,161 @@
+import java.util.Scanner;
+
+/**
+ * Hospital Patient Management with abstract Patient class and MedicalRecord interface.
+ * Adapts cab service methods: calculateFare (calculateBill), enhanceInvoice (viewRecords).
+ * Demonstrates encapsulation, polymorphism, and guideline #13 (cautious constructors).
+ */
+public class HospitalPatientManagement {
+    /**
+     * Interface for medical records.
+     */
+    interface MedicalRecord {
+        void addRecord(String record);
+        String viewRecords();
+    }
+
+    /**
+     * Abstract Patient class with common fields and methods.
+     */
+    abstract static class Patient {
+        private String patientId;
+        private String name;
+        private int age;
+
+        public Patient(String patientId, String name, int age) {
+            this.patientId = patientId;
+            this.name = name;
+            this.age = age;
+        }
+
+        public abstract double calculateBill();
+
+        public String getPatientDetails() {
+            return "ID: " + patientId + ", Name: " + name + ", Age: " + age;
+        }
+
+        // Getters
+        public String getPatientId() { return patientId; }
+        public String getName() { return name; }
+        public int getAge() { return age; }
+    }
+
+    /**
+     * InPatient with specific billing logic.
+     */
+    static class InPatient extends Patient implements MedicalRecord {
+        private String[] records;
+        private int recordCount;
+        private static final int MAX_RECORDS = 10;
+        private static final double DAILY_RATE = 100.0;
+
+        public InPatient(String patientId, String name, int age) {
+            super(patientId, name, age);
+            this.records = new String[MAX_RECORDS];
+            this.recordCount = 0;
+        }
+
+        @Override
+        public double calculateBill() {
+            return recordCount * DAILY_RATE; // Bill based on days (records)
+        }
+
+        @Override
+        public void addRecord(String record) {
+            if (recordCount < MAX_RECORDS) {
+                records[recordCount++] = record;
+            }
+        }
+
+        @Override
+        public String viewRecords() {
+            StringBuilder sb = new StringBuilder("Records for " + getName() + ":\n");
+            for (int i = 0; i < recordCount; i++) {
+                sb.append(records[i]).append("\n");
+            }
+            return sb.toString();
+        }
+    }
+
+    /**
+     * OutPatient with specific billing logic.
+     */
+    static class OutPatient extends Patient implements MedicalRecord {
+        private String[] records;
+        private int recordCount;
+        private static final int MAX_RECORDS = 10;
+        private static final double VISIT_FEE = 50.0;
+
+        public OutPatient(String patientId, String name, int age) {
+            super(patientId, name, age);
+            this.records = new String[MAX_RECORDS];
+            this.recordCount = 0;
+        }
+
+        @Override
+        public double calculateBill() {
+            return recordCount * VISIT_FEE; // Bill based on visits
+        }
+
+        @Override
+        public void addRecord(String record) {
+            if (recordCount < MAX_RECORDS) {
+                records[recordCount++] = record;
+            }
+        }
+
+        @Override
+        public String viewRecords() {
+            StringBuilder sb = new StringBuilder("Records for " + getName() + ":\n");
+            for (int i = 0; i < recordCount; i++) {
+                sb.append(records[i]).append("\n");
+            }
+            return sb.toString();
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Patient[] patients = new Patient[10];
+        int patientCount = 0;
+
+        System.out.print("Enter number of patients: ");
+        int numPatients = scanner.nextInt();
+        scanner.nextLine();
+
+        for (int i = 0; i < numPatients; i++) {
+            System.out.print("Enter patient ID: ");
+            String id = scanner.nextLine();
+            System.out.print("Enter patient name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter age: ");
+            int age = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Is in-patient? (true/false): ");
+            boolean isInPatient = scanner.nextBoolean();
+            scanner.nextLine();
+
+            Patient patient = isInPatient ? new InPatient(id, name, age) : new OutPatient(id, name, age);
+            System.out.print("Enter number of records: ");
+            int numRecords = scanner.nextInt();
+            scanner.nextLine();
+
+            for (int j = 0; j < numRecords; j++) {
+                System.out.print("Enter record: ");
+                String record = scanner.nextLine();
+                ((MedicalRecord) patient).addRecord(record);
+            }
+            patients[patientCount++] = patient;
+        }
+
+        // Polymorphic processing
+        for (int i = 0; i < patientCount; i++) {
+            Patient p = patients[i];
+            System.out.println(p.getPatientDetails());
+            System.out.println("Bill: $" + String.format("%.2f", p.calculateBill()));
+            System.out.println(((MedicalRecord) p).viewRecords());
+        }
+
+        scanner.close();
+    }
+}

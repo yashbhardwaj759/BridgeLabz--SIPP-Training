@@ -1,0 +1,132 @@
+import java.util.Scanner;
+
+/**
+ * Employee Management System with abstract Employee class and Department interface.
+ * Demonstrates encapsulation, polymorphism, and guideline #1 (composition over inheritance).
+ * Uses arrays and Scanner for input, inspired by cab service requirements.
+ */
+public class EmployeeManagementSystem {
+    /**
+     * Interface for department-related operations.
+     */
+    interface Department {
+        void assignDepartment(String deptName);
+        String getDepartmentDetails();
+    }
+
+    /**
+     * Abstract Employee class with common fields and methods.
+     */
+    abstract static class Employee implements Department {
+        private String employeeId;
+        private String name;
+        private double baseSalary;
+        private String department;
+
+        public Employee(String employeeId, String name, double baseSalary) {
+            this.employeeId = employeeId;
+            this.name = name;
+            this.baseSalary = baseSalary;
+            this.department = "Unassigned";
+        }
+
+        public abstract double calculateSalary();
+
+        public String displayDetails() {
+            return "ID: " + employeeId + ", Name: " + name + ", Department: " + department + 
+                   ", Salary: $" + String.format("%.2f", calculateSalary());
+        }
+
+        @Override
+        public void assignDepartment(String deptName) {
+            this.department = deptName;
+        }
+
+        @Override
+        public String getDepartmentDetails() {
+            return "Department: " + department;
+        }
+
+        // Getters and setters
+        public String getEmployeeId() { return employeeId; }
+        public String getName() { return name; }
+        public double getBaseSalary() { return baseSalary; }
+        public void setBaseSalary(double baseSalary) { this.baseSalary = baseSalary; }
+    }
+
+    /**
+     * FullTimeEmployee with fixed salary calculation.
+     */
+    static class FullTimeEmployee extends Employee {
+        public FullTimeEmployee(String employeeId, String name, double baseSalary) {
+            super(employeeId, name, baseSalary);
+        }
+
+        @Override
+        public double calculateSalary() {
+            return getBaseSalary(); // Fixed salary
+        }
+    }
+
+    /**
+     * PartTimeEmployee with hourly-based salary calculation.
+     */
+    static class PartTimeEmployee extends Employee {
+        private double hoursWorked;
+        private static final double HOURLY_RATE = 20.0;
+
+        public PartTimeEmployee(String employeeId, String name, double baseSalary, double hoursWorked) {
+            super(employeeId, name, baseSalary);
+            this.hoursWorked = hoursWorked;
+        }
+
+        @Override
+        public double calculateSalary() {
+            return getBaseSalary() + (hoursWorked * HOURLY_RATE);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Employee[] employees = new Employee[10];
+        int employeeCount = 0;
+
+        System.out.print("Enter number of employees: ");
+        int numEmployees = scanner.nextInt();
+        scanner.nextLine();
+
+        for (int i = 0; i < numEmployees; i++) {
+            System.out.print("Enter employee ID: ");
+            String id = scanner.nextLine();
+            System.out.print("Enter employee name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter base salary: ");
+            double salary = scanner.nextDouble();
+            System.out.print("Is full-time? (true/false): ");
+            boolean isFullTime = scanner.nextBoolean();
+            scanner.nextLine();
+            System.out.print("Enter department: ");
+            String dept = scanner.nextLine();
+
+            Employee emp;
+            if (isFullTime) {
+                emp = new FullTimeEmployee(id, name, salary);
+            } else {
+                System.out.print("Enter hours worked: ");
+                double hours = scanner.nextDouble();
+                scanner.nextLine();
+                emp = new PartTimeEmployee(id, name, salary, hours);
+            }
+            emp.assignDepartment(dept);
+            employees[employeeCount++] = emp;
+        }
+
+        // Polymorphic processing
+        for (int i = 0; i < employeeCount; i++) {
+            System.out.println(employees[i].displayDetails());
+            System.out.println(employees[i].getDepartmentDetails());
+        }
+
+        scanner.close();
+    }
+}

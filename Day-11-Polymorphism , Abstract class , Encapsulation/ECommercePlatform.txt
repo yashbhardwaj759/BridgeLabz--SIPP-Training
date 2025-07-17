@@ -1,0 +1,146 @@
+import java.util.Scanner;
+
+/**
+ * E-Commerce Platform with abstract Product class and Taxable interface.
+ * Adapts cab service methods: calculateFare (calculateDiscount), enhanceInvoice (getTaxDetails).
+ * Demonstrates encapsulation, polymorphism, and guideline #4 (shallow hierarchies).
+ */
+public class ECommercePlatform {
+    /**
+     * Interface for taxable products.
+     */
+    interface Taxable {
+        double calculateTax();
+        String getTaxDetails();
+    }
+
+    /**
+     * Abstract Product class with common fields and methods.
+     */
+    abstract static class Product {
+        private String productId;
+        private String name;
+        private double price;
+
+        public Product(String productId, String name, double price) {
+            this.productId = productId;
+            this.name = name;
+            this.price = price;
+        }
+
+        public abstract double calculateDiscount();
+
+.
+/**
+ * Electronics product with specific discount and tax.
+ */
+static class Electronics extends Product implements Taxable {
+    public Electronics(String productId, String name, double price) {
+        super(productId, name, price);
+    }
+
+    @Override
+    public double calculateDiscount() {
+        return getPrice() * 0.1; // 10% discount
+    }
+
+    @Override
+    public double calculateTax() {
+        return getPrice() * 0.15; // 15% tax
+    }
+
+    @Override
+    public String getTaxDetails() {
+        return "Tax for " + getName() + ": $" + String.format("%.2f", calculateTax());
+    }
+}
+
+/**
+ * Clothing product with no tax.
+ */
+static class Clothing extends Product {
+    public Clothing(String productId, String name, double price) {
+        super(productId, name, price);
+    }
+
+    @Override
+    public double calculateDiscount() {
+        return getPrice() * 0.2; // 20% discount
+    }
+}
+
+/**
+ * Groceries product with specific discount and tax.
+ */
+static class Groceries extends Product implements Taxable {
+    public Groceries(String productId, String name, double price) {
+        super(productId, name, price);
+    }
+
+    @Override
+    public double calculateDiscount() {
+        return getPrice() * 0.05; // 5% discount
+    }
+
+    @Override
+    public double calculateTax() {
+        return getPrice() * 0.05; // 5% tax
+    }
+
+    @Override
+    public String getTaxDetails() {
+        return "Tax for " + getName() + ": $" + String.format("%.2f", calculateTax());
+    }
+}
+
+public static void main(String[] args) {
+    Scanner scanner = new Scanner(System.in);
+    Product[] products = new Product[10];
+    int productCount = 0;
+
+    System.out.print("Enter number of products: ");
+    int numProducts = scanner.nextInt();
+    scanner.nextLine();
+
+    for (int i = 0; i < numProducts; i++) {
+        System.out.print("Enter product ID: ");
+        String id = scanner.nextLine();
+        System.out.print("Enter product name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter price: ");
+        double price = scanner.nextDouble();
+        scanner.nextLine();
+        System.out.print("Enter type (Electronics/Clothing/Groceries): ");
+        String type = scanner.nextLine();
+
+        Product product;
+        switch (type.toLowerCase()) {
+            case "electronics":
+                product = new Electronics(id, name, price);
+                break;
+            case "clothing":
+                product = new Clothing(id, name, price);
+                break;
+            case "groceries":
+                product = new Groceries(id, name, price);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid product type");
+        }
+        products[productCount++] = product;
+    }
+
+    // Polymorphic processing
+    for (int i = 0; i < productCount; i++) {
+        Product p = products[i];
+        double tax = (p instanceof Taxable) ? ((Taxable) p).calculateTax() : 0.0;
+        double finalPrice = p.getPrice() + tax - p.calculateDiscount();
+        System.out.println("Product: " + p.getName() + ", Final Price: $" + String.format("%.2f", finalPrice));
+        if (p instanceof Taxable) {
+            System.out.println(((Taxable) p).getTaxDetails());
+        }
+    }
+
+    scanner.close();
+}
+}
