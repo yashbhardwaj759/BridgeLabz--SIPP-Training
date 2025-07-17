@@ -1,0 +1,56 @@
+import java.util.Stack;
+import java.util.Scanner;
+
+/**
+ * Calculates the stock span for each day using a stack.
+ * Follows Stack best practices: check underflow, use collections framework.
+ * Adapts cab service method: calculateFare (calculateSpan).
+ */
+public class StockSpanProblem {
+    // Calculate spans: O(n)
+    public int[] calculateSpan(int[] prices) {
+        int n = prices.length;
+        int[] spans = new int[n];
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && prices[stack.peek()] <= prices[i]) {
+                stack.pop();
+            }
+            spans[i] = stack.isEmpty() ? i + 1 : i - stack.peek();
+            stack.push(i);
+        }
+        return spans;
+    }
+
+    // Display spans: O(n)
+    public String enhanceInvoice(int[] prices, int[] spans) {
+        StringBuilder sb = new StringBuilder("Stock Spans:\n");
+        sb.append("----------------\n");
+        sb.append(String.format("%-10s %-10s\n", "Price", "Span"));
+        sb.append("----------------\n");
+        for (int i = 0; i < prices.length; i++) {
+            sb.append(String.format("%-10d %-10d\n", prices[i], spans[i]));
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        StockSpanProblem solver = new StockSpanProblem();
+
+        System.out.print("Enter number of days: ");
+        int n = scanner.nextInt();
+        int[] prices = new int[n];
+        System.out.println("Enter stock prices:");
+        for (int i = 0; i < n; i++) {
+            prices[i] = scanner.nextInt();
+        }
+
+        int[] spans = solver.calculateSpan(prices);
+        System.out.println(solver.enhanceInvoice(prices, spans));
+
+        scanner.close();
+    }
+}

@@ -1,0 +1,67 @@
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+/**
+ * Finds all subarrays with zero sum using a hash map.
+ * Follows Hash Map best practices: efficient collision handling.
+ * Adapts cab service method: enhanceInvoice (displaySubarrays).
+ */
+public class ZeroSumSubarrays {
+    // Find zero-sum subarrays: O(n)
+    public ArrayList<int[]> findZeroSumSubarrays(int[] arr) {
+        HashMap<Long, ArrayList<Integer>> sumMap = new HashMap<>();
+        ArrayList<int[]> result = new ArrayList<>();
+        long sum = 0;
+        sumMap.put(0L, new ArrayList<>());
+        sumMap.get(0).add(-1);
+
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+            if (sumMap.containsKey(sum)) {
+                for (int start : sumMap.get(sum)) {
+                    result.add(new int[]{start + 1, i});
+                }
+            }
+            sumMap.computeIfAbsent(sum, k -> new ArrayList<>()).add(i);
+        }
+        return result;
+    }
+
+    // Display subarrays: O(n)
+    public String enhanceInvoice(int[] arr, ArrayList<int[]> subarrays) {
+        StringBuilder sb = new StringBuilder("Zero-Sum Subarrays:\n");
+        sb.append("----------------\n");
+        if (subarrays.isEmpty()) {
+            sb.append("None\n");
+        } else {
+            for (int[] sub : subarrays) {
+                sb.append("[");
+                for (int i = sub[0]; i <= sub[1]; i++) {
+                    sb.append(arr[i]).append(i < sub[1] ? "," : "");
+                }
+                sb.append("] (Indices: ").append(sub[0]).append(" to ").append(sub[1]).append(")\n");
+            }
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ZeroSumSubarrays solver = new ZeroSumSubarrays();
+
+        System.out.print("Enter array size: ");
+        int n = scanner.nextInt();
+        int[] arr = new int[n];
+        System.out.println("Enter array elements:");
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+
+        ArrayList<int[]> subarrays = solver.findZeroSumSubarrays(arr);
+        System.out.println(solver.enhanceInvoice(arr, subarrays));
+
+        scanner.close();
+    }
+}

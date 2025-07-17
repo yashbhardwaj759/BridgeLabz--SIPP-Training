@@ -1,0 +1,66 @@
+import java.util.Stack;
+import java.util.Scanner;
+
+/**
+ * Sorts a stack in ascending order using recursion.
+ * Follows Stack best practices: avoid infinite loops, check underflow.
+ * Adapts cab service method: invoiceService (displaySortedStack).
+ */
+public class SortStackRecursion {
+    private Stack<Integer> stack;
+
+    public SortStackRecursion() {
+        stack = new Stack<>();
+    }
+
+    // Push element: O(1)
+    public void push(int value) {
+        stack.push(value);
+    }
+
+    // Sort stack: O(n^2)
+    public void sortStack() {
+        if (!stack.isEmpty()) {
+            int temp = stack.pop();
+            sortStack();
+            insertSorted(temp);
+        }
+    }
+
+    // Insert element in sorted order: O(n)
+    private void insertSorted(int value) {
+        if (stack.isEmpty() || stack.peek() <= value) {
+            stack.push(value);
+        } else {
+            int temp = stack.pop();
+            insertSorted(value);
+            stack.push(temp);
+        }
+    }
+
+    // Display sorted stack: O(n)
+    public String invoiceService() {
+        StringBuilder sb = new StringBuilder("Sorted Stack:\n");
+        for (Integer item : stack) {
+            sb.append(item).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        SortStackRecursion sorter = new SortStackRecursion();
+
+        System.out.print("Enter number of elements: ");
+        int n = scanner.nextInt();
+        System.out.println("Enter elements:");
+        for (int i = 0; i < n; i++) {
+            sorter.push(scanner.nextInt());
+        }
+
+        sorter.sortStack();
+        System.out.println(sorter.invoiceService());
+
+        scanner.close();
+    }
+}

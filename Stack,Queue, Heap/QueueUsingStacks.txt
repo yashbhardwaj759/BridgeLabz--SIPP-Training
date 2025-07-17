@@ -1,0 +1,108 @@
+import java.util.Stack;
+import java.util.Scanner;
+
+/**
+ * Implements a queue using two stacks with efficient enqueue and dequeue operations.
+ * Follows Stack best practices: check underflow, use collections framework.
+ * Adapts cab service method: enhanceInvoice (displayQueue).
+ */
+public class QueueUsingStacks {
+    private Stack<Integer> enqueueStack;
+    private Stack<Integer> dequeueStack;
+
+    public QueueUsingStacks() {
+        enqueueStack = new Stack<>();
+        dequeueStack = new Stack<>();
+    }
+
+    // Enqueue: O(1)
+    public void enqueue(int value) {
+        enqueueStack.push(value);
+    }
+
+    // Dequeue: Amortized O(1)
+    public int dequeue() {
+        if (isEmpty()) {
+            throw new IllegalStateException("Queue is empty");
+        }
+        if (dequeueStack.isEmpty()) {
+            while (!enqueueStack.isEmpty()) {
+                dequeueStack.push(enqueueStack.pop());
+            }
+        }
+        return dequeueStack.pop();
+    }
+
+    // Peek: Amortized O(1)
+    public int peek() {
+        if (isEmpty()) {
+            throw new IllegalStateException("Queue is empty");
+        }
+        if (dequeueStack.isEmpty()) {
+            while (!enqueueStack.isEmpty()) {
+                dequeueStack.push(enqueueStack.pop());
+            }
+        }
+        return dequeueStack.peek();
+    }
+
+    // Check if queue is empty: O(1)
+    public boolean isEmpty() {
+        return enqueueStack.isEmpty() && dequeueStack.isEmpty();
+    }
+
+    // Display queue: O(n)
+    public String enhanceInvoice() {
+        StringBuilder sb = new StringBuilder("Queue Contents:\n");
+        sb.append("----------------\n");
+        for (Integer item : dequeueStack) {
+            sb.append(item).append("\n");
+        }
+        for (int i = enqueueStack.size() - 1; i >= 0; i--) {
+            sb.append(enqueueStack.get(i)).append("\n");
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        QueueUsingStacks queue = new QueueUsingStacks();
+
+        while (true) {
+            System.out.println("\n1. Enqueue\n2. Dequeue\n3. Peek\n4. Display Queue\n5. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter value: ");
+                    int value = scanner.nextInt();
+                    queue.enqueue(value);
+                    break;
+                case 2:
+                    try {
+                        System.out.println("Dequeued: " + queue.dequeue());
+                    } catch (IllegalStateException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    break;
+                case 3:
+                    try {
+                        System.out.println("Front: " + queue.peek());
+                    } catch (IllegalStateException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    break;
+                case 4:
+                    System.out.println(queue.enhanceInvoice());
+                    break;
+                case 5:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}

@@ -1,0 +1,53 @@
+import java.util.HashSet;
+import java.util.Scanner;
+
+/**
+ * Finds the longest consecutive sequence using a hash set.
+ * Follows Hash Map best practices: efficient lookup, minimal collisions.
+ * Adapts cab service method: invoiceService (displaySequence).
+ */
+public class LongestConsecutiveSequence {
+    // Find longest sequence: O(n)
+    public int findLongestSequence(int[] arr) {
+        HashSet<Integer> set = new HashSet<>();
+        for (int num : arr) {
+            set.add(num);
+        }
+        int maxLength = 0;
+        for (int num : set) {
+            if (!set.contains(num - 1)) {
+                int current = num;
+                int length = 1;
+                while (set.contains(current + 1)) {
+                    current++;
+                    length++;
+                }
+                maxLength = Math.max(maxLength, length);
+            }
+        }
+        return maxLength;
+    }
+
+    // Display result: O(1)
+    public String invoiceService(int[] arr, int length) {
+        return "Longest Consecutive Sequence Length: " + length;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        LongestConsecutiveSequence solver = new LongestConsecutiveSequence();
+
+        System.out.print("Enter array size: ");
+        int n = scanner.nextInt();
+        int[] arr = new int[n];
+        System.out.println("Enter array elements:");
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+
+        int length = solver.findLongestSequence(arr);
+        System.out.println(solver.invoiceService(arr, length));
+
+        scanner.close();
+    }
+}

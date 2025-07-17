@@ -1,0 +1,51 @@
+import java.util.HashMap;
+import java.util.Scanner;
+
+/**
+ * Solves the two sum problem using a hash map.
+ * Follows Hash Map best practices: efficient lookup, collision handling.
+ * Adapts cab service method: invoiceService (displayResult).
+ */
+public class TwoSumProblem {
+    // Find two sum indices: O(n)
+    public int[] twoSum(int[] arr, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            int complement = target - arr[i];
+            if (map.containsKey(complement)) {
+                return new int[]{map.get(complement), i};
+            }
+            map.put(arr[i], i);
+        }
+        return new int[]{-1, -1};
+    }
+
+    // Display result: O(1)
+    public String invoiceService(int[] arr, int[] indices, int target) {
+        if (indices[0] == -1) {
+            return "No solution found for target sum " + target;
+        }
+        return String.format("Solution: Indices (%d, %d) with values (%d, %d) sum to %d",
+                indices[0], indices[1], arr[indices[0]], arr[indices[1]], target);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        TwoSumProblem solver = new TwoSumProblem();
+
+        System.out.print("Enter array size: ");
+        int n = scanner.nextInt();
+        int[] arr = new int[n];
+        System.out.println("Enter array elements:");
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+        System.out.print("Enter target sum: ");
+        int target = scanner.nextInt();
+
+        int[] indices = solver.twoSum(arr, target);
+        System.out.println(solver.invoiceService(arr, indices, target));
+
+        scanner.close();
+    }
+}

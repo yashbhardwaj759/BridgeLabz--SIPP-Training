@@ -1,0 +1,51 @@
+import java.util.HashMap;
+import java.util.Scanner;
+
+/**
+ * Checks for a pair with a given sum using a hash map.
+ * Follows Hash Map best practices: efficient lookup, collision handling.
+ * Adapts cab service method: invoiceService (displayResult).
+ */
+public class PairWithSum {
+    // Find pair: O(n)
+    public int[] findPair(int[] arr, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            int complement = target - arr[i];
+            if (map.containsKey(complement)) {
+                return new int[]{map.get(complement), i};
+            }
+            map.put(arr[i], i);
+        }
+        return new int[]{-1, -1};
+    }
+
+    // Display result: O(1)
+    public String invoiceService(int[] arr, int[] pair, int target) {
+        if (pair[0] == -1) {
+            return "No pair found with sum " + target;
+        }
+        return String.format("Pair found: (%d, %d) at indices (%d, %d) with sum %d",
+                arr[pair[0]], arr[pair[1]], pair[0], pair[1], target);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        PairWithSum solver = new PairWithSum();
+
+        System.out.print("Enter array size: ");
+        int n = scanner.nextInt();
+        int[] arr = new int[n];
+        System.out.println("Enter array elements:");
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+        System.out.print("Enter target sum: ");
+        int target = scanner.nextInt();
+
+        int[] pair = solver.findPair(arr, target);
+        System.out.println(solver.invoiceService(arr, pair, target));
+
+        scanner.close();
+    }
+}

@@ -1,0 +1,75 @@
+import java.util.ArrayDeque;
+import java.util.Scanner;
+
+/**
+ * Finds the starting point for a circular tour using a queue.
+ * Follows Queue best practices: use deque, optimize memory usage.
+ * Adapts cab service method: invoiceService (displayTour).
+ */
+public class CircularTourProblem {
+    static class PetrolPump {
+        int petrol;
+        int distance;
+
+        PetrolPump(int petrol, int distance) {
+            this.petrol = petrol;
+            this.distance = distance;
+        }
+    }
+
+    // Find starting point: O(n)
+    public int findStartingPoint(PetrolPump[] pumps) {
+        int n = pumps.length;
+        int start = 0, deficit = 0, surplus = 0;
+
+        for (int i = 0; i < n; i++) {
+            surplus += pumps[i].petrol - pumps[i].distance;
+            if (surplus < 0) {
+                start = i + 1;
+                deficit += surplus;
+                surplus = 0;
+            }
+        }
+        return (surplus + deficit >= 0 && start < n) ? start : -1;
+    }
+
+    // Display tour: O(n)
+    public String invoiceService(PetrolPump[] pumps, int start) {
+        if (start == -1) {
+            return "No valid starting point found";
+        }
+        StringBuilder sb = new StringBuilder("Circular Tour:\n");
+        sb.append("Starting Point: Pump ").append(start + 1).append("\n");
+        sb.append("----------------\n");
+        sb.append(String.format("%-10s %-10s %-10s\n", "Pump", "Petrol", "Distance"));
+        sb.append("----------------\n");
+        for (int i = 0; i < pumps.length; i++) {
+            int index = (start + i) % pumps.length;
+            sb.append(String.format("%-10d %-10d %-10d\n", index + 1, pumps[index].petrol, pumps[index].distance));
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CircularTourProblem solver = new CircularTourProblem();
+
+        System.out.print("Enter number of pumps: ");
+        int n = scanner.nextInt();
+        PetrolPump[] pumps = new PetrolPump[n];
+        System.out.println("Enter petrol and distance for each pump:");
+        for (int i = 0; i < n; i++) {
+            System.out.print("Pump " + (i + 1) + " Petrol: ");
+            int petrol = scanner.nextInt();
+            System.out.print("Pump " + (i + 1) + " Distance: ");
+            int distance = scanner.nextInt();
+            pumps[i] = new PetrolPump(petrol, distance);
+        }
+
+        int start = solver.findStartingPoint(pumps);
+        System.out.println(solver.invoiceService(pumps, start));
+
+        scanner.close();
+    }
+}

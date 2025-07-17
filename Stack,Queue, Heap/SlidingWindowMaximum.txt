@@ -1,0 +1,73 @@
+import java.util.ArrayDeque;
+import java.util.Scanner;
+
+/**
+ * Finds the maximum element in each sliding window using a deque.
+ * Follows Queue best practices: use deque, avoid polling empty queues.
+ * Adapts cab service method: enhanceInvoice (displayMaxima).
+ */
+public class SlidingWindowMaximum {
+    // Find maxima: O(n)
+    public int[] findMaxima(int[] arr, int k) {
+        if (arr == null || k <= 0 || k > arr.length) {
+            return new int[0];
+        }
+        int n = arr.length;
+        int[] result = new int[n - k + 1];
+        ArrayDeque<Integer> deque = new ArrayDeque<>();
+
+        for (int i = 0; i < n; i++) {
+            // Remove elements outside the window
+            while (!deque.isEmpty() && deque.peekFirst() < i - k + 1) {
+                deque.pollFirst();
+            }
+            // Remove smaller elements
+            while (!deque.isEmpty() && arr[deque.peekLast()] < arr[i]) {
+                deque.pollLast();
+            }
+            deque.offerLast(i);
+            if (i >= k - 1) {
+                result[i - k + 1] = arr[deque.peekFirst()];
+            }
+        }
+        return result;
+    }
+
+    // Display maxima: O(n)
+    public String enhanceInvoice(int[] arr, int[] maxima, int k) {
+        StringBuilder sb = new StringBuilder("Sliding Window Maxima (k=" + k + "):\n");
+        sb.append("----------------\n");
+        sb.append(String.format("%-15s %-10s\n", "Window", "Maximum"));
+        sb.append("----------------\n");
+        for (int i = 0; i < maxima.length; i++) {
+            String window = "[";
+            for (int j = i; j < i + k; j++) {
+                window += arr[j] + (j < i + k - 1 ? "," : "");
+            }
+            window += "]";
+            sb.append(String.format("%-15s %-10d\n", window, maxima[i]));
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        SlidingWindowMaximum solver = new SlidingWindowMaximum();
+
+        System.out.print("Enter array size: ");
+        int n = scanner.nextInt();
+        int[] arr = new int[n];
+        System.out.println("Enter array elements:");
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+        System.out.print("Enter window size: ");
+        int k = scanner.nextInt();
+
+        int[] maxima = solver.findMaxima(arr, k);
+        System.out.println(solver.enhanceInvoice(arr, maxima, k));
+
+        scanner.close();
+    }
+}

@@ -1,0 +1,133 @@
+import java.util.Scanner;
+import java.util.LinkedList;
+
+/**
+ * Implements a custom hash map with separate chaining for collision handling.
+ * Follows Hash Map best practices: efficient hash function, collision handling.
+ * Adapts cab service method: enhanceInvoice (displayMap).
+ */
+public class CustomHashMap<K, V> {
+    private static class Entry<K, V> {
+        K key;
+        V value;
+
+        Entry(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    private LinkedList<Entry<K, V>>[] table;
+    private int size;
+    private static final int INITIAL_CAPACITY = 16;
+
+    @SuppressWarnings("unchecked")
+    public CustomHashMap() {
+        table = new LinkedList[INITIAL_CAPACITY];
+        size = 0;
+    }
+
+    // Hash function: O(1)
+    private int hash(K key) {
+        return Math.abs(key.hashCode() % table.length);
+    }
+
+    // Put: O(1) average
+    public void put(K key, V value) {
+        int index = hash(key);
+        if (table[index] == null) {
+            table[index] = new LinkedList<>();
+        }
+        for (Entry<K, V> entry : table[index]) {
+            if (entry.key.equals(key)) {
+                entry.value = value;
+                return;
+            }
+        }
+        table[index].add(new Entry<>(key, value));
+        size++;
+    }
+
+    // Get: O(1) average
+    public V get(K key) {
+        int index = hash(key);
+        if (table[index] != null) {
+            for (Entry<K, V> entry : table[index]) {
+                if (entry.key.equals(key)) {
+                    return entry.value;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Remove: O(1) average
+    public void remove(K key) {
+        int index = hash(key);
+        if (table[index] != null) {
+            for (Entry<K, V> entry : table[index]) {
+                if (entry.key.equals(key)) {
+                    table[index].remove(entry);
+                    size--;
+                    return;
+                }
+            }
+        }
+    }
+
+    // Display map: O(n)
+    public String enhanceInvoice() {
+        StringBuilder sb = new StringBuilder("Hash Map Contents:\n");
+        sb.append("----------------\n");
+        for (LinkedList<Entry<K, V>> bucket : table) {
+            if (bucket != null) {
+                for (Entry<K, V> entry : bucket) {
+                    sb.append(entry.key).append(": ").append(entry.value).append("\n");
+                }
+            }
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CustomHashMap<String, Integer> map = new CustomHashMap<>();
+
+        while (true) {
+            System.out.println("\n1. Put\n2. Get\n3. Remove\n4. Display Map\n5. Exit");
+            System.out.print("Choose option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter key: ");
+                    String key = scanner.nextLine();
+                    System.out.print("Enter value: ");
+                    int value = scanner.nextInt();
+                    map.put(key, value);
+                    break;
+                case 2:
+                    System.out.print("Enter key: ");
+                    key = scanner.nextLine();
+                    Integer val = map.get(key);
+                    System.out.println(val != null ? "Value: " + val : "Key not found");
+                    break;
+                case 3:
+                    System.out.print("Enter key: ");
+                    key = scanner.nextLine();
+                    map.remove(key);
+                    break;
+                case 4:
+                    System.out.println(map.enhanceInvoice());
+                    break;
+                case 5:
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}
