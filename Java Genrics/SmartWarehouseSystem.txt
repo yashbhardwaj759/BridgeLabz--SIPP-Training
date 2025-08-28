@@ -1,0 +1,115 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * Smart Warehouse System using generics for type-safe item management.
+ * Follows best practices: bounded type parameters, wildcards for flexibility, type safety.
+ * Adapts cab service method: enhanceInvoice (displayItems).
+ */
+public class SmartWarehouseSystem {
+    // Abstract class for warehouse items
+    abstract static class WarehouseItem {
+        String name;
+        double price;
+
+        WarehouseItem(String name, double price) {
+            this.name = name;
+            this.price = price;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s: $%.2f", name, price);
+        }
+    }
+
+    // Concrete item classes
+    static class Electronics extends WarehouseItem {
+        Electronics(String name, double price) { super(name, price); }
+    }
+
+    static class Groceries extends WarehouseItem {
+        Groceries(String name, double price) { super(name, price); }
+    }
+
+    static class Furniture extends WarehouseItem {
+        Furniture(String name, double price) { super(name, price); }
+    }
+
+    // Generic Storage class
+    static class Storage<T extends WarehouseItem> {
+        private List<T> items = new ArrayList<>();
+
+        public void addItem(T item) {
+            items.add(item);
+        }
+
+        public List<T> getItems() {
+            return items;
+        }
+    }
+
+    // Display items using wildcard: O(n)
+    public String displayItems(List<? extends WarehouseItem> items) {
+        StringBuilder sb = new StringBuilder("Warehouse Items:\n");
+        sb.append("----------------\n");
+        for (WarehouseItem item : items) {
+            sb.append(item).append("\n");
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    // Adapts invoiceService for concise output: O(1)
+    public String invoiceService(int itemCount) {
+        return String.format("Total Items in Warehouse: %d", itemCount);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        SmartWarehouseSystem system = new SmartWarehouseSystem();
+        Storage<Electronics> electronicsStorage = new Storage<>();
+        Storage<Groceries> groceriesStorage = new Storage<>();
+        Storage<Furniture> furnitureStorage = new Storage<>();
+
+        System.out.print("Enter number of items to add: ");
+        int n = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter item type (Electronics/Groceries/Furniture): ");
+            String type = scanner.nextLine();
+            System.out.print("Enter item name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter item price: ");
+            double price = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
+
+            switch (type.toLowerCase()) {
+                case "electronics":
+                    electronicsStorage.addItem(new Electronics(name, price));
+                    break;
+                case "groceries":
+                    groceriesStorage.addItem(new Groceries(name, price));
+                    break;
+                case "furniture":
+                    furnitureStorage.addItem(new Furniture(name, price));
+                    break;
+                default:
+                    System.out.println("Invalid item type");
+            }
+        }
+
+        // Combine all items for display using wildcard
+        List<WarehouseItem> allItems = new ArrayList<>();
+        allItems.addAll(electronicsStorage.getItems());
+        allItems.addAll(groceriesStorage.getItems());
+        allItems.addAll(furnitureStorage.getItems());
+
+        System.out.println(system.displayItems(allItems));
+        System.out.println(system.invoiceService(allItems.size()));
+
+        scanner.close();
+    }
+}

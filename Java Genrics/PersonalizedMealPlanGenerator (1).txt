@@ -1,0 +1,120 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * Personalized Meal Plan Generator using generics for type-safe meal plans.
+ * Follows best practices: generic methods, bounded type parameters, type safety.
+ * Adapts cab service method: enhanceInvoice (displayMealPlan).
+ */
+public class PersonalizedMealPlanGenerator {
+    // Interface for meal plans
+    interface MealPlan {
+        String getType();
+    }
+
+    // Concrete meal plan classes
+    static class VegetarianMeal implements MealPlan {
+        String name;
+
+        VegetarianMeal(String name) { this.name = name; }
+
+        @Override
+        public String getType() { return "Vegetarian"; }
+
+        @Override
+        public String toString() { return String.format("%s (%s)", name, getType()); }
+    }
+
+    static class VeganMeal implements MealPlan {
+        String name;
+
+        VeganMeal(String name) { this.name = name; }
+
+        @Override
+        public String getType() { return "Vegan"; }
+
+        @Override
+        public String toString() { return String.format("%s (%s)", name, getType()); }
+    }
+
+    static class KetoMeal implements MealPlan {
+        String name;
+
+        KetoMeal(String name) { this.name = name; }
+
+        @Override
+        public String getType() { return "Keto"; }
+
+        @Override
+        public String toString() { return String.format("%s (%s)", name, getType()); }
+    }
+
+    // Generic Meal class
+    static class Meal<T extends MealPlan> {
+        T mealPlan;
+
+        Meal(T mealPlan) {
+            this.mealPlan = mealPlan;
+        }
+
+        @Override
+        public String toString() {
+            return mealPlan.toString();
+        }
+    }
+
+    // Generic method to validate and generate meal plan: O(1)
+    public <T extends MealPlan> Meal<T> generateMealPlan(T mealPlan) {
+        return new Meal<>(mealPlan);
+    }
+
+    // Display meal plan: O(n)
+    public String enhanceInvoice(List<Meal<? extends MealPlan>> mealPlan) {
+        StringBuilder sb = new StringBuilder("Meal Plan:\n");
+        sb.append("----------------\n");
+        for (Meal<?> meal : mealPlan) {
+            sb.append(meal).append("\n");
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        PersonalizedMealPlanGenerator generator = new PersonalizedMealPlanGenerator();
+        List<Meal<? extends MealPlan>> mealPlan = new ArrayList<>();
+
+        System.out.print("Enter number of meals to add: ");
+        int n = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter meal type (Vegetarian/Vegan/Keto): ");
+            String type = scanner.nextLine();
+            System.out.print("Enter meal name: ");
+            String name = scanner.nextLine();
+
+            Meal<? extends MealPlan> meal;
+            switch (type.toLowerCase()) {
+                case "vegetarian":
+                    meal = generator.generateMealPlan(new VegetarianMeal(name));
+                    break;
+                case "vegan":
+                    meal = generator.generateMealPlan(new VeganMeal(name));
+                    break;
+                case "keto":
+                    meal = generator.generateMealPlan(new KetoMeal(name));
+                    break;
+                default:
+                    System.out.println("Invalid meal type");
+                    continue;
+            }
+            mealPlan.add(meal);
+        }
+
+        System.out.println(generator.enhanceInvoice(mealPlan));
+
+        scanner.close();
+    }
+}

@@ -1,0 +1,24 @@
+class Employee {
+    String name;
+    String department;
+
+    constructor Employee(name, department) {
+        this.name = name;
+        this.department = department;
+    }
+}
+
+function main() {
+    // Create ArrayList of employees
+    ArrayList<Employee> employees = new ArrayList();
+
+    employees.add(new Employee("John", "IT"));
+    employees.add(new Employee("Sara", "HR"));
+    employees.add(new Employee("Mike", "IT"));
+
+ for (Employee e : employees) {
+    if (e.department.equals("IT")) {
+        System.out.println(e.name);
+    }
+}  
+}

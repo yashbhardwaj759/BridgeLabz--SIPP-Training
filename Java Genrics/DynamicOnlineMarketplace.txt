@@ -1,0 +1,117 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * Dynamic Online Marketplace using generics for type-safe product catalog.
+ * Follows best practices: generic methods, bounded type parameters, type safety.
+ * Adapts cab service method: enhanceInvoice (displayCatalog).
+ */
+public class DynamicOnlineMarketplace {
+    // Abstract class for product category
+    abstract static class Category {
+        String name;
+
+        Category(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    // Concrete category classes
+    static class BookCategory extends Category {
+        BookCategory(String name) { super(name); }
+    }
+
+    static class ClothingCategory extends Category {
+        ClothingCategory(String name) { super(name); }
+    }
+
+    static class GadgetCategory extends Category {
+        GadgetCategory(String name) { super(name); }
+    }
+
+    // Generic Product class
+    static class Product<T extends Category> {
+        String name;
+        double price;
+        T category;
+
+        Product(String name, double price, T category) {
+            this.name = name;
+            this.price = price;
+            this.category = category;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s (%s): $%.2f", name, category, price);
+        }
+    }
+
+    // Generic method to apply discount: O(1)
+    public <T extends Category> void applyDiscount(Product<T> product, double percentage) {
+        if (percentage >= 0 && percentage <= 100) {
+            product.price *= (1 - percentage / 100);
+        }
+    }
+
+    // Display catalog: O(n)
+    public String enhanceInvoice(List<Product<? extends Category>> catalog) {
+        StringBuilder sb = new StringBuilder("Product Catalog:\n");
+        sb.append("----------------\n");
+        for (Product<?> product : catalog) {
+            sb.append(product).append("\n");
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        DynamicOnlineMarketplace marketplace = new DynamicOnlineMarketplace();
+        List<Product<? extends Category>> catalog = new ArrayList<>();
+
+        System.out.print("Enter number of products to add: ");
+        int n = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter product type (Book/Clothing/Gadget): ");
+            String type = scanner.nextLine();
+            System.out.print("Enter product name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter product price: ");
+            double price = scanner.nextDouble();
+            System.out.print("Enter discount percentage: ");
+            double discount = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
+
+            Product<? extends Category> product;
+            switch (type.toLowerCase()) {
+                case "book":
+                    product = new Product<>(name, price, new BookCategory("Book"));
+                    break;
+                case "clothing":
+                    product = new Product<>(name, price, new ClothingCategory("Clothing"));
+                    break;
+                case "gadget":
+                    product = new Product<>(name, price, new GadgetCategory("Gadget"));
+                    break;
+                default:
+                    System.out.println("Invalid product type");
+                    continue;
+            }
+            marketplace.applyDiscount(product, discount);
+            catalog.add(product);
+        }
+
+        System.out.println(marketplace.enhanceInvoice(catalog));
+
+        scanner.close();
+    }
+}

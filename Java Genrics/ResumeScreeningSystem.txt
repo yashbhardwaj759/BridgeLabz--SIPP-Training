@@ -1,0 +1,119 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * AI-Driven Resume Screening System using generics for type-safe resume processing.
+ * Follows best practices: generic classes, wildcards, bounded type parameters.
+ * Adapts cab service method: enhanceInvoice (displayResumes).
+ */
+public class ResumeScreeningSystem {
+    // Abstract class for job roles
+    abstract static class JobRole {
+        String role;
+
+        JobRole(String role) {
+            this.role = role;
+        }
+
+        @Override
+        public String toString() {
+            return role;
+        }
+    }
+
+    // Concrete job role classes
+    static class SoftwareEngineer extends JobRole {
+        SoftwareEngineer() { super("Software Engineer"); }
+    }
+
+    static class DataScientist extends JobRole {
+        DataScientist() { super("Data Scientist"); }
+    }
+
+    static class ProductManager extends JobRole {
+        ProductManager() { super("Product Manager"); }
+    }
+
+    // Generic Resume class
+    static class Resume<T extends JobRole> {
+        String candidateName;
+        T jobRole;
+
+        Resume(String candidateName, T jobRole) {
+            this.candidateName = candidateName;
+            this.jobRole = jobRole;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Candidate: %s, Role: %s", candidateName, jobRole);
+        }
+    }
+
+    // Screen resumes using wildcard: O(n)
+    public String screenResumes(List<? extends JobRole> resumes) {
+        StringBuilder sb = new StringBuilder("Screened Resumes:\n");
+        sb.append("----------------\n");
+        for (JobRole resume : resumes) {
+            sb.append(resume).append("\n");
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    // Adapts invoiceService for concise output: O(1)
+    public String invoiceService(int resumeCount) {
+        return String.format("Total Resumes Screened: %d", resumeCount);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ResumeScreeningSystem system = new ResumeScreeningSystem();
+        List<Resume<? extends JobRole>> resumes = new ArrayList<>();
+
+        System.out.print("Enter number of resumes to add: ");
+        int n = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter job role (SoftwareEngineer/DataScientist/ProductManager): ");
+            String role = scanner.nextLine();
+            System.out.print("Enter candidate name: ");
+            String name = scanner.nextLine();
+
+            Resume<? extends JobRole> resume;
+            switch (role.toLowerCase()) {
+                case "softwareengineer":
+                    resume = new Resume<>(name, new SoftwareEngineer());
+                    break;
+                case "datascientist":
+                    resume = new Resume<>(name, new DataScientist());
+                    break;
+                case "productmanager":
+                    resume = new Resume<>(name, new ProductManager());
+                    break;
+                default:
+                    System.out.println("Invalid job role");
+                    continue;
+            }
+            resumes.add(resume);
+        }
+
+        System.out.println(system.enhanceInvoice(resumes));
+        System.out.println(system.invoiceService(resumes.size()));
+
+        scanner.close();
+    }
+
+    // Display resumes: O(n)
+    public String enhanceInvoice(List<? extends JobRole> resumes) {
+        StringBuilder sb = new StringBuilder("Resume List:\n");
+        sb.append("----------------\n");
+        for (JobRole resume : resumes) {
+            sb.append(resume).append("\n");
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+}

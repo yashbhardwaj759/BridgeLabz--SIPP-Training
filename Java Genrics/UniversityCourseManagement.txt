@@ -1,0 +1,119 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * University Course Management System using generics for type-safe course handling.
+ * Follows best practices: generic classes, wildcards, bounded type parameters.
+ * Adapts cab service method: enhanceInvoice (displayCourses).
+ */
+public class UniversityCourseManagement {
+    // Abstract class for course types
+    abstract static class CourseType {
+        String type;
+
+        CourseType(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return type;
+        }
+    }
+
+    // Concrete course type classes
+    static class ExamCourse extends CourseType {
+        ExamCourse() { super("Exam-Based"); }
+    }
+
+    static class AssignmentCourse extends CourseType {
+        AssignmentCourse() { super("Assignment-Based"); }
+    }
+
+    static class ResearchCourse extends CourseType {
+        ResearchCourse() { super("Research-Based"); }
+    }
+
+    // Generic Course class
+    static class Course<T extends CourseType> {
+        String name;
+        T courseType;
+
+        Course(String name, T courseType) {
+            this.name = name;
+            this.courseType = courseType;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Course: %s (%s)", name, courseType);
+        }
+    }
+
+    // Display courses using wildcard: O(n)
+    public String displayCourses(List<? extends CourseType> courses) {
+        StringBuilder sb = new StringBuilder("Courses:\n");
+        sb.append("----------------\n");
+        for (CourseType course : courses) {
+            sb.append(course).append("\n");
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+
+    // Adapts invoiceService for concise output: O(1)
+    public String invoiceService(int courseCount) {
+        return String.format("Total Courses: %d", courseCount);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        UniversityCourseManagement system = new UniversityCourseManagement();
+        List<Course<? extends CourseType>> courses = new ArrayList<>();
+
+        System.out.print("Enter number of courses to add: ");
+        int n = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter course type (Exam/Assignment/Research): ");
+            String type = scanner.nextLine();
+            System.out.print("Enter course name: ");
+            String name = scanner.nextLine();
+
+            Course<? extends CourseType> course;
+            switch (type.toLowerCase()) {
+                case "exam":
+                    course = new Course<>(name, new ExamCourse());
+                    break;
+                case "assignment":
+                    course = new Course<>(name, new AssignmentCourse());
+                    break;
+                case "research":
+                    course = new Course<>(name, new ResearchCourse());
+                    break;
+                default:
+                    System.out.println("Invalid course type");
+                    continue;
+            }
+            courses.add(course);
+        }
+
+        System.out.println(system.enhanceInvoice(courses));
+        System.out.println(system.invoiceService(courses.size()));
+
+        scanner.close();
+    }
+
+    // Display courses: O(n)
+    public String enhanceInvoice(List<? extends CourseType> courses) {
+        StringBuilder sb = new StringBuilder("Course List:\n");
+        sb.append("----------------\n");
+        for (CourseType course : courses) {
+            sb.append(course).append("\n");
+        }
+        sb.append("----------------\n");
+        return sb.toString();
+    }
+}
