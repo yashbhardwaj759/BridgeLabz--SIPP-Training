@@ -1,0 +1,41 @@
+class Call {
+    String type;   // "normal" or "emergency"
+    String customerName;
+}
+
+class CallCenter {
+    Queue normalQueue;
+    Queue emergencyQueue;
+
+    constructor CallCenter() {
+        normalQueue = new Queue();
+        emergencyQueue = new Queue();
+    }
+
+    method addCall(Call c) {
+        if (c.type == "emergency") {
+            emergencyQueue.enqueue(c);
+        } else {
+            normalQueue.enqueue(c);
+        }
+    }
+
+    method answerCall() {
+        if (emergencyQueue not empty) {
+            return emergencyQueue.dequeue();
+        } else {
+            return normalQueue.dequeue();
+        }
+    }
+}
+
+// Main
+function main() {
+    CallCenter cc = new CallCenter();
+
+    cc.addCall(new Call("normal", "Alice"));
+    cc.addCall(new Call("emergency", "Bob"));
+
+    cc.answerCall();  // Bob (emergency) first
+    cc.answerCall();  // Alice (normal) next
+}

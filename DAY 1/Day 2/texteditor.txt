@@ -1,0 +1,25 @@
+class TextEditor {
+    Stack<String> history;
+
+    constructor TextEditor() {
+        history = new Stack();
+    }
+
+    method type(text) {
+        history.push(text);
+    }
+
+    method undo() {
+        if (history is not empty) {
+            return history.pop();
+        }
+    }
+}
+
+
+function main() {
+    TextEditor editor = new TextEditor();
+    editor.type("Hello");
+    editor.type("Hello World");
+    editor.undo();  // removes "Hello World"
+}
