@@ -1,0 +1,21 @@
+function main() {
+    HashMap<String, Integer> studentScores = new HashMap();
+    studentScores.put("Alice", 85);
+    studentScores.put("Bob", 92);
+    studentScores.put("Charlie", 78);
+
+    // Convert entrySet to list for index-based loop
+    List<Entry<String, Integer>> entries = new ArrayList(studentScores.entrySet());
+ 
+    Entry<String, Integer> topStudent = entries.get(0);
+
+    for (int i = 1; i < entries.size(); i++) {
+        Entry<String, Integer> current = entries.get(i);
+
+        if (current.getValue() > topStudent.getValue()) {
+            topStudent = current;
+        }
+    }
+
+    print "Top scorer: " + topStudent.getKey() + " with marks " + topStudent.getValue();
+}
