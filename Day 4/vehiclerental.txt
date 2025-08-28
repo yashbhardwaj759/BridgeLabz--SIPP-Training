@@ -1,0 +1,26 @@
+INTERFACE Rentable
+    FUNCTION rent()
+    FUNCTION returnVehicle()
+
+ABSTRACT CLASS Vehicle IMPLEMENTS Rentable
+    ATTRIBUTE vehicleId
+    ATTRIBUTE brand
+
+    FUNCTION rent()
+        PRINT brand + " rented"
+
+    FUNCTION returnVehicle()
+        PRINT brand + " returned"
+
+CLASS Car EXTENDS Vehicle
+CLASS Bike EXTENDS Vehicle
+CLASS Truck EXTENDS Vehicle
+
+CLASS VehicleFactory
+    FUNCTION createVehicle(type)
+        IF type == "car"
+            RETURN new Car()
+        ELSE IF type == "bike"
+            RETURN new Bike()
+        ELSE IF type == "truck"
+            RETURN new Truck()

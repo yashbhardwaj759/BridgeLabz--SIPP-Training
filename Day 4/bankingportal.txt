@@ -1,0 +1,30 @@
+CLASS Account
+    ATTRIBUTE accountNumber
+    ATTRIBUTE balance
+
+    FUNCTION deposit(amount)
+        balance = balance + amount
+
+    FUNCTION withdraw(amount)
+        PRINT "Generic withdrawal - override in subclasses"
+
+CLASS Saving EXTENDS Account
+    ATTRIBUTE minBalance = 1000
+
+    FUNCTION withdraw(amount)
+        IF balance - amount >= minBalance
+            balance = balance - amount
+            PRINT "Withdrawal successful"
+        ELSE
+            PRINT "Insufficient balance (min balance required)"
+
+CLASS Current EXTENDS Account
+    ATTRIBUTE overdraftLimit = 5000
+
+    FUNCTION withdraw(amount)
+        IF balance + overdraftLimit >= amount
+            balance = balance - amount
+            PRINT "Withdrawal successful with overdraft"
+        ELSE
+            PRINT "Exceeds overdraft limit"
+            

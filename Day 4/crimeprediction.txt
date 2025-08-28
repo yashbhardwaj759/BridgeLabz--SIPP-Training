@@ -1,0 +1,18 @@
+GRAPH cityZones (nodes = zones, edges = connections)
+MAP riskScore(zone -> int)
+
+FUNCTION dfs(zone, visited)
+    MARK visited[zone] = true
+    totalRisk = riskScore[zone]
+    FOR each neighbor IN cityZones[zone]
+        IF neighbor NOT visited
+            totalRisk = totalRisk + dfs(neighbor, visited)
+    RETURN totalRisk
+
+FUNCTION findHighRiskZones()
+    visited = empty map
+    FOR each zone IN cityZones
+        IF zone NOT visited
+            clusterRisk = dfs(zone, visited)
+            IF clusterRisk > threshold
+                PRINT "High risk cluster found starting at zone: " + zone

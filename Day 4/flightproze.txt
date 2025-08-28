@@ -1,0 +1,29 @@
+CLASS Flight
+    ATTRIBUTE price
+    ATTRIBUTE duration
+
+FUNCTION compare(f1, f2)
+    IF f1.price != f2.price
+        RETURN f1.price - f2.price
+    ELSE
+        RETURN f1.duration - f2.duration
+
+FUNCTION mergeSort(flights)
+    IF flights.size <= 1
+        RETURN flights
+    mid = flights.size / 2
+    left = mergeSort(flights[0..mid])
+    right = mergeSort(flights[mid..end])
+    RETURN merge(left, right)
+
+FUNCTION merge(left, right)
+    result = empty list
+    WHILE left and right not empty
+        IF compare(left[0], right[0]) <= 0
+            ADD left[0] to result
+            REMOVE left[0]
+        ELSE
+            ADD right[0] to result
+            REMOVE right[0]
+    ADD remaining left + right to result
+    RETURN result

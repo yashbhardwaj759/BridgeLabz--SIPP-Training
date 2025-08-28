@@ -1,0 +1,11 @@
+CLASS Transaction
+    ATTRIBUTE merchant
+    ATTRIBUTE month
+    ATTRIBUTE amount
+
+FUNCTION generateReport(transactions)
+    GROUP transactions BY merchant
+        FOR each merchantGroup
+            GROUP merchantGroup BY month
+                SUM amounts
+    PRINT summary (merchant -> month -> total amount)

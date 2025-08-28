@@ -1,0 +1,16 @@
+ABSTRACT CLASS Crop
+    ATTRIBUTE name
+    ABSTRACT FUNCTION waterRequirement()
+    ABSTRACT FUNCTION harvest()
+
+CLASS Rice EXTENDS Crop
+    FUNCTION waterRequirement()
+        RETURN 50
+    FUNCTION harvest()
+        PRINT "Harvesting Rice"
+
+CLASS Wheat EXTENDS Crop
+    FUNCTION waterRequirement()
+        RETURN 30
+    FUNCTION harvest()
+        PRINT "Harvesting Wheat"

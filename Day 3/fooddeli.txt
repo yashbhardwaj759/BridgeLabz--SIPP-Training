@@ -1,0 +1,23 @@
+CLASS Customer
+    ATTRIBUTE name
+    ATTRIBUTE address
+
+CLASS Restaurant
+    ATTRIBUTE name
+    ATTRIBUTE location
+
+CLASS DeliveryBoy
+    ATTRIBUTE name
+    ATTRIBUTE phone
+
+CLASS Order
+    ATTRIBUTE customer (Customer)
+    ATTRIBUTE restaurant (Restaurant)
+    ATTRIBUTE deliveryBoy (DeliveryBoy)
+    ATTRIBUTE items (LIST of STRING)
+
+    FUNCTION showOrderDetails()
+        PRINT "Customer: " + customer.name
+        PRINT "Restaurant: " + restaurant.name
+        PRINT "Delivery by: " + deliveryBoy.name
+        PRINT "Items: " + items

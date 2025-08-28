@@ -1,0 +1,16 @@
+CLASS Job
+    ATTRIBUTE name
+    ATTRIBUTE deadline
+    ATTRIBUTE processingTime
+
+CLASS JobScheduler
+    PRIORITY_QUEUE jobs (sorted by deadline, then processingTime)
+
+    FUNCTION addJob(job)
+        INSERT job INTO jobs
+
+    FUNCTION processJobs()
+        WHILE jobs NOT EMPTY
+            job = REMOVE_MIN(jobs)
+            PRINT "Processing " + job.name
+            

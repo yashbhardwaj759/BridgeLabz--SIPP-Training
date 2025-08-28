@@ -1,0 +1,16 @@
+ENUM TrafficLight = { RED, GREEN, YELLOW }
+
+CLASS TrafficSignal
+    VARIABLE current = RED
+
+    FUNCTION switchLight()
+        IF current == RED
+            current = GREEN
+        ELSE IF current == GREEN
+            current = YELLOW
+        ELSE
+            current = RED
+
+    FUNCTION getCurrent()
+        RETURN current
+        

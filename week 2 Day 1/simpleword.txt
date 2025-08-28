@@ -1,0 +1,18 @@
+FUNCTION wordCounter(paragraph)
+    words = SPLIT paragraph INTO tokens
+    map = EMPTY Map<String, Integer>
+
+    FOR each word in words
+        cleanWord = LOWERCASE(removePunctuation(word))
+        IF cleanWord in map
+            map[cleanWord]++
+        ELSE
+            map[cleanWord] = 1
+
+    SORT map by frequency descending
+    PRINT map
+
+MAIN
+    text = "The news today is about the rise in technology trends."
+    wordCounter(text)
+    

@@ -1,0 +1,21 @@
+FUNCTION solveMaze(maze, x, y, solution)
+    IF x,y is destination
+        MARK solution[x][y] = 1
+        RETURN true
+
+    IF position (x,y) is valid AND not visited
+        MARK solution[x][y] = 1
+
+        IF solveMaze(maze, x+1, y, solution) == true
+            RETURN true
+        IF solveMaze(maze, x, y+1, solution) == true
+            RETURN true
+        IF solveMaze(maze, x-1, y, solution) == true
+            RETURN true
+        IF solveMaze(maze, x, y-1, solution) == true
+            RETURN true
+
+        UNMARK solution[x][y] = 0  (backtrack)
+
+    RETURN false
+    

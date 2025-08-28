@@ -1,0 +1,24 @@
+CLASS Transaction<T>
+    ATTRIBUTE transactionId
+    ATTRIBUTE paymentMethod (T)
+
+    FUNCTION process()
+        PRINT "Processing transaction using " + paymentMethod
+
+CLASS UPI
+    ATTRIBUTE upiId
+
+CLASS Card
+    ATTRIBUTE cardNumber
+
+CLASS NetBanking
+    ATTRIBUTE bankName
+
+FUNCTION main()
+    t1 = Transaction<UPI>
+    t2 = Transaction<Card>
+    t3 = Transaction<NetBanking>
+    t1.process()
+    t2.process()
+    t3.process()
+    

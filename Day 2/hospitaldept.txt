@@ -1,0 +1,19 @@
+CLASS Doctor
+    ATTRIBUTE name
+    ATTRIBUTE specialization
+
+CLASS Hospital
+    MAP departments (KEY: departmentName, VALUE: LIST of Doctor)
+
+    FUNCTION addDoctor(department, doctor)
+        IF department NOT IN departments
+            departments[department] = EMPTY LIST
+        ADD doctor TO departments[department]
+
+    FUNCTION filterBySpecialization(specialization)
+        result = EMPTY LIST
+        FOR EACH department IN departments
+            FOR EACH doctor IN departments[department]
+                IF doctor.specialization == specialization
+                    ADD doctor TO result
+        RETURN result

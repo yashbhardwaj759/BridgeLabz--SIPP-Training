@@ -1,0 +1,22 @@
+INTERFACE Searchable
+    FUNCTION search(keyword)
+
+INTERFACE Printable
+    FUNCTION print()
+
+CLASS XRayReport IMPLEMENTS Searchable, Printable
+    FUNCTION search(keyword)
+        RETURN "Searching XRay report for " + keyword
+    FUNCTION print()
+        PRINT "Printing XRay Report"
+
+CLASS BloodReport IMPLEMENTS Searchable, Printable
+    FUNCTION search(keyword)
+        RETURN "Searching Blood report for " + keyword
+    FUNCTION print()
+        PRINT "Printing Blood Report"
+
+CLASS ReportManager
+    FUNCTION handleReport(report: Searchable, Printable)
+        PRINT report.search("test")
+        report.print()

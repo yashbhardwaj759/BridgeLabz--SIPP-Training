@@ -1,0 +1,21 @@
+CLASS AttendanceSystem
+    ATTRIBUTES: attendance[students][days]
+
+    METHOD markAttendance(studentID, day, value)
+        attendance[studentID][day] = value   // 'P' or 'A'
+
+    METHOD updateAttendance(studentID, day, newValue)
+        attendance[studentID][day] = newValue
+
+    METHOD monthlyReport(studentID)
+        count = 0
+        FOR day = 1 TO totalDays
+            IF attendance[studentID][day] == 'P'
+                count++
+        PRINT "Student", studentID, "was present", count, "days"
+
+MAIN
+    system = NEW AttendanceSystem(30 students, 30 days)
+    system.markAttendance(1, 3, 'A')
+    system.updateAttendance(1, 3, 'P')
+    system.monthlyReport(1)

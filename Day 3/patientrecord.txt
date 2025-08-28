@@ -1,0 +1,13 @@
+MAP patients (KEY: patientID, VALUE: patientDetails)
+
+FUNCTION addPatient(id, details)
+    patients[id] = details
+
+FUNCTION getPatient(id)
+    RETURN patients[id]
+
+FUNCTION updatePatient(id, newDetails)
+    patients[id] = newDetails
+
+FUNCTION deletePatient(id)
+    REMOVE patients[id]

@@ -1,0 +1,20 @@
+CLASS Student
+    ATTRIBUTE name
+    ATTRIBUTE rollNo
+
+CLASS Course
+    ATTRIBUTE code
+    ATTRIBUTE title
+
+MAP<Course, List<Student>> courseMap
+
+FUNCTION register(course, student)
+    IF course not in courseMap
+        courseMap[course] = empty list
+    ADD student to courseMap[course]
+
+FUNCTION displayRegistrations()
+    FOR each course in courseMap
+        PRINT course.title + " => "
+        FOR each student in courseMap[course]
+            PRINT student.name

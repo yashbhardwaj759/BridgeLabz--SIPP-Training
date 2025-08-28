@@ -1,0 +1,10 @@
+CLASS Item
+    ATTRIBUTE name
+    ATTRIBUTE price
+
+FUNCTION calculateTotal(cart: LIST of Item)
+    total = 0
+    FOR EACH item IN cart
+        total = total + item.price
+    RETURN total
+    
