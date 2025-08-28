@@ -1,0 +1,97 @@
+CLASS Pet
+    VARIABLES:
+        name
+        age
+        breed
+
+    METHOD constructor(name, age, breed)
+        SET this.name = name
+        SET this.age = age
+        SET this.breed = breed
+
+    METHOD displayInfo()
+        PRINT "Name: " + name
+        PRINT "Age: " + age
+        PRINT "Breed: " + breed
+
+    METHOD sound()
+        PRINT "Some generic pet sound"
+
+END CLASS
+
+-------------------------------------------------------
+
+CLASS Dog EXTENDS Pet
+
+    METHOD sound()
+        PRINT "Woof! Woof!"
+
+END CLASS
+
+-------------------------------------------------------
+
+CLASS Cat EXTENDS Pet
+
+    METHOD sound()
+        PRINT "Meow!"
+
+END CLASS
+
+-------------------------------------------------------
+
+CLASS Bird EXTENDS Pet
+
+    METHOD sound()
+        PRINT "Chirp!"
+
+END CLASS
+
+-------------------------------------------------------
+
+CLASS AdoptionCenter
+    VARIABLE petsList = empty list
+
+    METHOD addPet(pet)
+        ADD pet to petsList
+
+    METHOD showAvailablePets()
+        FOR EACH pet IN petsList
+            CALL pet.displayInfo()
+            CALL pet.sound()
+        END FOR
+
+    METHOD adoptPet(petName)
+        FOR EACH pet IN petsList
+            IF pet.name == petName
+                REMOVE pet FROM petsList
+                PRINT petName + " has been adopted!"
+                RETURN
+        END FOR
+        PRINT "Pet not found."
+
+END CLASS
+
+-------------------------------------------------------
+
+MAIN PROGRAM:
+
+    CREATE dog1 = Dog("Max", 3, "Labrador")
+    CREATE cat1 = Cat("Whiskers", 2, "Persian")
+    CREATE bird1 = Bird("Tweety", 1, "Parrot")
+
+    CREATE center = AdoptionCenter()
+
+    CALL center.addPet(dog1)
+    CALL center.addPet(cat1)
+    CALL center.addPet(bird1)
+
+    PRINT "Available Pets:"
+    CALL center.showAvailablePets()
+
+    PRINT "Adopting Whiskers..."
+    CALL center.adoptPet("Whiskers")
+
+    PRINT "Updated List of Pets:"
+    CALL center.showAvailablePets()
+
+END PROGRAM

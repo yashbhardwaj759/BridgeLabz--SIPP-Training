@@ -1,0 +1,28 @@
+class Member {
+    String name;
+    int id;
+    Date membershipDate;
+
+    constructor Member(name, id, membershipDate) {
+        this.name = name;
+        this.id = id;
+        this.membershipDate = membershipDate;
+    }
+
+    method checkValidity() {
+        if (membershipDate within 1 year) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+function main() {
+    Member m1 = new Member("Sushant", 101, "2025-01-01");
+
+    if (m1.checkValidity()) {
+        print "Membership valid";
+    } else {
+        print "Membership expired";
+    }
+}
